@@ -1,14 +1,13 @@
 <template>
   <div id="app">
-    <!-- Conditionally render Login or MaterialsList based on login status -->
-    <Login v-if="!loggedIn" @login-success="handleLoginSuccess" />
-    <MaterialsList v-if="loggedIn" />
+    <router-view @login-success="handleLoginSuccess" />
   </div>
 </template>
 
+
 <script>
 // Import the MaterialsList and Login components
-import MaterialsList from './api/MaterialList.vue';
+import MaterialsList from './views/MaterialList.vue';
 import Login from './components/Login.vue';
 
 export default {
@@ -25,7 +24,9 @@ export default {
   methods: {
     // Handle login success from Login component
     handleLoginSuccess() {
+
       this.loggedIn = true; // Mark the user as logged in
+      this.$router.push('/materials');
     },
   },
 };

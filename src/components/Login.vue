@@ -1,82 +1,71 @@
 <template>
-    <div>
-        <h1>Login</h1>
-        <input v-model="name" type="text" placeholder="Enter your name" />
-        <input v-model="pass" type="password" placeholder="Enter your password" />
-        <button @click="login">Login</button>
+  <div class="min-vh-100 d-flex align-items-center justify-content-center px-3 bg-light text-dark">
+    <div class="card shadow p-4 w-100" style="max-width: 420px;">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="m-0">🔐 Login</h4>
+      </div>
 
-        <div v-if="loginStatus">
-            <p>{{ loginStatus }}</p>
+      <form @submit.prevent="login">
+        <div class="mb-3">
+          <label for="inputName" class="form-label">Username</label>
+          <input type="text" class="form-control" id="inputName"
+            placeholder="Enter your name" v-model="name" required />
         </div>
+
+        <div class="mb-3">
+          <label for="inputPassword" class="form-label">Password</label>
+          <input type="password" class="form-control" id="inputPassword"
+            placeholder="Enter your password" v-model="pass" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Login</button>
+
+        <div v-if="loginStatus" class="alert mt-3 mb-0"
+          :class="loginStatus.startsWith('Login successful') ? 'alert-success' : 'alert-danger'">
+          {{ loginStatus }}
+        </div>
+      </form>
     </div>
+  </div>
 </template>
 
 <script>
 export default {
-    data() {
-        return {
-            name: '',
-            pass: '',
-            loginStatus: '', // Store login status or message
-        };
-    },
-    methods: {
-        async login() {
-            try {
-                const requestBody = {
-                    name: this.name,
-                    pass: this.pass,
-                };
+  data() {
+    return {
+      name: '',
+      pass: '',
+      loginStatus: '',
+    };
+  },
+  methods: {
+    async login() {
+      try {
+        const response = await fetch('http://localhost:8080/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ name: this.name, pass: this.pass }),
+        });
 
-                const response = await fetch('http://localhost:8080/auth/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(requestBody),
-                });
-
-                if (response.ok) {
-                    // Use response.text() since we're expecting plain text, not JSON
-                    const text = await response.text();
-                    this.loginStatus = `Login successful! ${text}`;  // Display the plain text response
-                    this.$emit('login-success'); // Emit the success event
-                } else {
-                    const errorText = await response.text();  // Handle error response as text
-                    this.loginStatus = `Login failed: ${errorText || 'Unknown error'}`;
-                }
-            } catch (error) {
-                this.loginStatus = `Error: ${error.message}`;
-            }
+        const text = await response.text();
+        if (response.ok) {
+          this.loginStatus = `Login successful! ${text}`;
+          this.$emit('login-success');
+        } else {
+          this.loginStatus = `Login failed: ${text || 'Unknown error'}`;
         }
-
+      } catch (error) {
+        this.loginStatus = `Error: ${error.message}`;
+      }
     },
+  },
 };
 </script>
 
 <style scoped>
-input {
-    margin: 10px;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-button {
-    padding: 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #45a049;
-}
-
-p {
-    margin-top: 20px;
-    color: green;
+.card {
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 </style>
