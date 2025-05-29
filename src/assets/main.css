@@ -1,6 +1,7 @@
-@import './base.css';
+/* @import './base.css';
 
 /* Full height layout untuk html, body, dan #app */
+/*
 html,
 body,
 #app {
@@ -8,24 +9,30 @@ body,
   margin: 0;
   padding: 0;
 }
+*/
 
 /* Center layout default */
+/*
 body {
   font-family: 'Segoe UI', sans-serif;
   background-color: #f8f9fa;
   color: #212529;
   overflow-x: hidden;
 }
+*/
 
 /* Wrapper App */
+/*
 #app {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   font-weight: normal;
 }
+*/
 
 /* Link style */
+/*
 a,
 .green {
   text-decoration: none;
@@ -33,16 +40,20 @@ a,
   transition: 0.4s;
   padding: 3px;
 }
+*/
 
 /* Hover */
+/*
 @media (hover: hover) {
   a:hover {
     background-color: hsla(160, 100%, 37%, 0.2);
   }
 }
+*/
 
 /* Desktop layout at >= 1024px */
-@media (min-width: 1024px) {
+/*
+@media (min-width: 9999px) {
   body {
     height: 100vh;
     margin: 0;
@@ -60,3 +71,4 @@ a,
     height: 100%;
   }
 }
+*/

@@ -1,34 +1,24 @@
 <template>
   <div id="app">
+    <!-- Semua halaman ditampilkan via router-view -->
     <router-view @login-success="handleLoginSuccess" />
   </div>
 </template>
 
-
 <script>
-// Import the MaterialsList and Login components
-import MaterialsList from './views/MaterialList.vue';
-import Login from './components/Login.vue';
-
 export default {
   name: 'App',
-  components: {
-    MaterialsList,
-    Login,
-  },
   data() {
     return {
-      loggedIn: false, // Track if the user is logged in
+      loggedIn: false
     };
   },
   methods: {
-    // Handle login success from Login component
     handleLoginSuccess() {
-
-      this.loggedIn = true; // Mark the user as logged in
+      this.loggedIn = true;
       this.$router.push('/materials');
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -39,6 +29,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 0;
+  min-height: 100vh;
 }
 </style>

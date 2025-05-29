@@ -1,10 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import MaterialsList from '../views/MaterialList.vue';
+import LandingPage from '../views/LandingPage.vue';
 import Login from '../components/Login.vue';
-import AddMaterial from '@/views/AddMaterial.vue';
+import MaterialsList from '../views/MaterialList.vue';
+import AddMaterial from '../views/AddMaterial.vue';
+
 const routes = [
   {
     path: '/',
+    name: 'LandingPage',
+    component: LandingPage
+  },
+  {
+    path: '/login',
     name: 'Login',
     component: Login
   },
