@@ -1,5 +1,5 @@
 <template>
-  <div class="min-vh-100 d-flex align-items-center justify-content-center px-3 bg-light text-dark">
+  <div class="min-vh-100 d-flex align-items-center justify-content-center px-3  text-dark">
     <div class="card shadow p-4 w-100" style="max-width: 420px;">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h4 class="m-0">🔐 Login</h4>
@@ -8,14 +8,14 @@
       <form @submit.prevent="login">
         <div class="mb-3">
           <label for="inputName" class="form-label">Username</label>
-          <input type="text" class="form-control" id="inputName"
-            placeholder="Enter your name" v-model="name" required />
+          <input type="text" class="form-control" id="inputName" placeholder="Enter your name" v-model="name"
+            required />
         </div>
 
         <div class="mb-3">
           <label for="inputPassword" class="form-label">Password</label>
-          <input type="password" class="form-control" id="inputPassword"
-            placeholder="Enter your password" v-model="pass" required />
+          <input type="password" class="form-control" id="inputPassword" placeholder="Enter your password"
+            v-model="pass" required />
         </div>
 
         <button type="submit" class="btn btn-primary w-100">Login</button>
