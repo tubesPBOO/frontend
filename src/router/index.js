@@ -3,6 +3,8 @@ import LandingPage from '../views/LandingPage.vue';
 import Login from '../components/Login.vue';
 import MaterialsList from '../views/MaterialList.vue';
 import AddMaterial from '../views/AddMaterial.vue';
+import RegisterCustomer from '../views/RegisterCustomer.vue';
+import RegisterTukang from '../views/RegisterTukang.vue';
 
 const routes = [
   {
@@ -24,6 +26,16 @@ const routes = [
     path: '/materials/add',
     name: 'AddMaterial',
     component: AddMaterial
+  },
+  {
+    path: '/register/customer',
+    name: 'RegisterCustomer',
+    component: RegisterCustomer
+  },
+  {
+    path: '/register/tukang',
+    name: 'RegisterTukang',
+    component: RegisterTukang
   }
 ];
 
