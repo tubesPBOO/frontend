@@ -7,7 +7,7 @@
     <header class="d-flex justify-content-between align-items-center px-4 py-3 position-relative animate-fade-slide">
       <div class="d-flex align-items-center">
         <img src="/images/home-dot.svg" alt="Home" height="30" class="me-2" />
-        <span class="fw-bold">GROUP 4</span>
+        <span class="fw-bold" id="deskripsi">GROUP 4</span>
       </div>
       <div class="d-flex align-items-center gap-2">
         <button @click="goToLogin" class="btn btn-outline-light fw-bold px-3 py-1 animate-bounce-hover">
@@ -29,7 +29,7 @@
     <section class="about-us text-center py-5 position-relative animate-fade-slide delay-2">
       <div class="container">
         <h2 class="mb-3 fw-bold">Tentang Tukang.In</h2>
-        <p class="lead text-white-50">
+        <p class="lead text-white-50" id="deskripsi">
           Tukang.In adalah solusi digital untuk mencari tukang bangunan profesional dan membeli material bangunan secara online dengan mudah, cepat, dan aman.
         </p>
       </div>
@@ -42,23 +42,23 @@
         <div class="row">
           <div class="col-md-3 mb-4">
             <i class="bi bi-tools fs-1 text-light mb-2"></i>
-            <h5 class="fw-bold">Cari Tukang</h5>
-            <p class="text-white-50">Temukan tukang berpengalaman dan terpercaya.</p>
+            <h5 class="fw-bold" id="deskripsi">Cari Tukang</h5>
+            <p class="text-white-50" id="deskripsi">Temukan tukang berpengalaman dan terpercaya.</p>
           </div>
           <div class="col-md-3 mb-4">
             <i class="bi bi-bag-check-fill fs-1 text-light mb-2"></i>
-            <h5 class="fw-bold">Beli Material</h5>
-            <p class="text-white-50">Pesan material bangunan dengan harga transparan.</p>
+            <h5 class="fw-bold" id="deskripsi">Beli Material</h5>
+            <p class="text-white-50" id="deskripsi">Pesan material bangunan dengan harga transparan.</p>
           </div>
           <div class="col-md-3 mb-4">
             <i class="bi bi-truck fs-1 text-light mb-2"></i>
-            <h5 class="fw-bold">Pengiriman Cepat</h5>
-            <p class="text-white-50">Material dikirim langsung ke lokasi proyek Anda.</p>
+            <h5 class="fw-bold" id="deskripsi">Pengiriman Cepat</h5>
+            <p class="text-white-50" id="deskripsi">Material dikirim langsung ke lokasi proyek Anda.</p>
           </div>
           <div class="col-md-3 mb-4">
             <i class="bi bi-headset fs-1 text-light mb-2"></i>
-            <h5 class="fw-bold">Layanan 24/7</h5>
-            <p class="text-white-50">Bantuan teknis kapan saja Anda butuh.</p>
+            <h5 class="fw-bold" id="deskripsi">Layanan 24/7</h5>
+            <p class="text-white-50" id="deskripsi">Bantuan teknis kapan saja Anda butuh.</p>
           </div>
         </div>
       </div>
@@ -66,11 +66,11 @@
 
     <!-- Footer -->
     <footer class="d-flex justify-content-between px-5 pb-4 small fw-bold text-uppercase position-relative animate-fade-slide delay-4">
-      <span>Material</span>
+      <span id="deskripsi">Material</span>
       <span>-</span>
-      <span>Tukang Profesional</span>
-      <span>-</span>
-      <span>Trustworthy</span>
+      <span id="deskripsi">Tukang Profesional</span>
+      <span >-</span>
+      <span id="deskripsi">Trustworthy</span>
     </footer>
   </div>
 </template>
@@ -92,6 +92,8 @@ export default {
     goToLogin() {
       this.$router.push('/login');
     },
+/*************  ✨ Windsurf Command ⭐  *************/
+/*******  4eead552-90ce-41af-a55a-7558415501bf  *******/
     goToRegister() {
       this.$router.push('/register');
     },
@@ -181,5 +183,11 @@ footer span {
 .animate-bounce-hover:hover {
   transform: scale(1.05);
   box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+}
+
+#deskripsi {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-style: normal;
 }
 </style>

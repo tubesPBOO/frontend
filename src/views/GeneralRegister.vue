@@ -5,7 +5,7 @@
   <div class="center-wrapper d-flex justify-content-center align-items-center text-center position-relative">
     <div class="container animate-fade-slide">
       <h1 class="mb-4 fw-bold">Daftar Sebagai</h1>
-      <p class="mb-5 text-white-50">Pilih peran Anda untuk melanjutkan proses pendaftaran</p>
+      <p class="mb-5 text-white-50" id="deskripsi">Pilih peran Anda untuk melanjutkan proses pendaftaran</p>
 
       <div class="row justify-content-center g-4">
         <!-- Customer -->
@@ -13,7 +13,7 @@
           <div class="card-option" @click="goTo('/register/customer')">
             <i class="bi bi-person-circle icon mb-3"></i>
             <h5 class="fw-bold">Customer</h5>
-            <p class="text-white-50 small">Untuk Anda yang ingin mencari jasa tukang bangunan dan material berkualitas.</p>
+            <p class="text-white-50 small" id="deskripsi">Untuk Anda yang ingin mencari jasa tukang bangunan dan material berkualitas.</p>
           </div>
         </div>
 
@@ -22,7 +22,7 @@
           <div class="card-option" @click="goTo('/register/tukang')">
             <i class="bi bi-hammer icon mb-3"></i>
             <h5 class="fw-bold">Tukang</h5>
-            <p class="text-white-50 small">Untuk Anda yang ingin menawarkan jasa sebagai tukang profesional.</p>
+            <p class="text-white-50 small" id="deskripsi">Untuk Anda yang ingin menawarkan jasa sebagai tukang profesional.</p>
           </div>
         </div>
       </div>
@@ -58,7 +58,7 @@ export default {
   width: 100%;
   height: 100%;
   background:
-    linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+    linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3)),
     url('/images/register.jpg') center/cover no-repeat;
   animation: zoomBackground 30s ease-in-out infinite;
   z-index: 0;
@@ -101,6 +101,12 @@ export default {
   min-height: 100vh;
   padding: 2rem;
   z-index: 1;
+}
+
+#deskripsi {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-style: normal;
 }
 
 </style>
