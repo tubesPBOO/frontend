@@ -3,6 +3,7 @@ import LandingPage from '../views/LandingPage.vue';
 import Login from '../views/Login.vue';
 import MaterialsList from '../views/MaterialList.vue';
 import AddMaterial from '../views/AddMaterial.vue';
+import GeneralRegister from '../views/GeneralRegister.vue';
 import RegisterCustomer from '../views/RegisterCustomer.vue';
 import RegisterTukang from '../views/RegisterTukang.vue';
 
@@ -36,6 +37,11 @@ const routes = [
     path: '/register/tukang',
     name: 'RegisterTukang',
     component: RegisterTukang
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: GeneralRegister
   }
 ];
 
