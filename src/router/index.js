@@ -5,6 +5,8 @@ import MaterialsList from '../views/MaterialList.vue';
 import AddMaterial from '../views/AddMaterial.vue';
 import RegisterCustomer from '../views/RegisterCustomer.vue';
 import RegisterTukang from '../views/RegisterTukang.vue';
+import CustomerList from '../views/CustomerList.vue';
+import CustomerProfile from '../views/CustomerProfile.vue';
 
 const routes = [
   {
@@ -36,6 +38,36 @@ const routes = [
     path: '/register/tukang',
     name: 'RegisterTukang',
     component: RegisterTukang
+  },
+  {
+    path: '/customers',
+    name: 'CustomerList',
+    component: CustomerList
+  },
+  {
+    path: '/customer/:name',
+    name: 'CustomerProfile',
+    component: CustomerProfile
+  },
+  {
+  path: '/materials/edit',
+  name: 'EditMaterial',
+  component: () => import('@/views/EditMaterial.vue')
+  },
+  {
+  path: '/order/add',
+  name: 'AddOrder',
+  component: () => import('@/views/AddOrder.vue')
+  },
+  {
+  path: '/orders/details',
+  name: 'CustomerOrderDetails',
+  component: () => import('@/views/CustomerOrderDetails.vue')
+  },
+  {
+  path: '/tukang/orders',
+  name: 'TukangOrderList',
+  component: () => import('@/views/TukangOrderList.vue')
   }
 ];
 
