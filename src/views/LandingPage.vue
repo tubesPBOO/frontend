@@ -1,26 +1,71 @@
 <template>
-  <div class="landing-page text-black">
+  <div class="landing-page text-white position-relative">
+    <!-- Background -->
+    <div class="bg-overlay"></div>
+
     <!-- Header -->
-    <header class="d-flex justify-content-between align-items-center px-4 py-3">
+    <header class="d-flex justify-content-between align-items-center px-4 py-3 position-relative animate-fade-slide">
       <div class="d-flex align-items-center">
-        <img src="../assets/home-dot.svg" alt="Home" height="30" class="me-2" />
-        <span class="fw-bold text-white">GROUP 4</span>
+        <img src="/images/home-dot.svg" alt="Home" height="30" class="me-2" />
+        <span class="fw-bold">GROUP 4</span>
       </div>
-      <div>
-        <img src="../assets/arrow-down-left.svg" alt="Arrow" height="40" />
+      <div class="d-flex align-items-center gap-2">
+        <button @click="goToLogin" class="btn btn-outline-light fw-bold px-3 py-1 animate-bounce-hover">
+          <i class="bi bi-box-arrow-in-right me-2"></i> Login
+        </button>
+        <button @click="goToRegister" class="btn btn-light fw-bold text-dark px-3 py-1 animate-bounce-hover">
+          <i class="bi bi-person-plus-fill me-2"></i> Register
+        </button>
       </div>
     </header>
 
-    <!-- Logo + Login -->
-    <section class="d-flex justify-content-center align-items-center text-center flex-column" style="height: 70vh;">
-      <h1 class="logo-box fw-bold">Tukang.In</h1>
-      <button @click="goToLogin" class="btn btn-outline-light mt-4 px-5 py-2 fw-bold">
-        Login
-      </button>
+    <!-- Hero -->
+    <section class="d-flex justify-content-center align-items-center text-center flex-column position-relative" style="height: 70vh;">
+      <h1 class="logo-box fw-bold animate-fade-slide delay-1">Tukang.In</h1>
+      <p class="tagline mt-2 text-white-50 typing-text">{{ typedText }}</p>
     </section>
 
-    <!-- Footer keywords -->
-    <footer class="d-flex justify-content-between px-5 pb-4 small fw-bold text-uppercase">
+    <!-- About Us -->
+    <section class="about-us text-center py-5 position-relative animate-fade-slide delay-2">
+      <div class="container">
+        <h2 class="mb-3 fw-bold">Tentang Tukang.In</h2>
+        <p class="lead text-white-50">
+          Tukang.In adalah solusi digital untuk mencari tukang bangunan profesional dan membeli material bangunan secara online dengan mudah, cepat, dan aman.
+        </p>
+      </div>
+    </section>
+
+    <!-- Services -->
+    <section class="services py-5 position-relative animate-fade-slide delay-3">
+      <div class="container text-center">
+        <h2 class="fw-bold mb-4">Layanan Kami</h2>
+        <div class="row">
+          <div class="col-md-3 mb-4">
+            <i class="bi bi-tools fs-1 text-light mb-2"></i>
+            <h5 class="fw-bold">Cari Tukang</h5>
+            <p class="text-white-50">Temukan tukang berpengalaman dan terpercaya.</p>
+          </div>
+          <div class="col-md-3 mb-4">
+            <i class="bi bi-bag-check-fill fs-1 text-light mb-2"></i>
+            <h5 class="fw-bold">Beli Material</h5>
+            <p class="text-white-50">Pesan material bangunan dengan harga transparan.</p>
+          </div>
+          <div class="col-md-3 mb-4">
+            <i class="bi bi-truck fs-1 text-light mb-2"></i>
+            <h5 class="fw-bold">Pengiriman Cepat</h5>
+            <p class="text-white-50">Material dikirim langsung ke lokasi proyek Anda.</p>
+          </div>
+          <div class="col-md-3 mb-4">
+            <i class="bi bi-headset fs-1 text-light mb-2"></i>
+            <h5 class="fw-bold">Layanan 24/7</h5>
+            <p class="text-white-50">Bantuan teknis kapan saja Anda butuh.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="d-flex justify-content-between px-5 pb-4 small fw-bold text-uppercase position-relative animate-fade-slide delay-4">
       <span>Material</span>
       <span>-</span>
       <span>Tukang Profesional</span>
@@ -33,27 +78,108 @@
 <script>
 export default {
   name: 'LandingPage',
+  data() {
+    return {
+      fullText: 'Solusi mudah cari tukang dan material bangunan',
+      typedText: '',
+      currentCharIndex: 0,
+    };
+  },
+  mounted() {
+    this.typeEffect();
+  },
   methods: {
     goToLogin() {
-      this.$router.push('/login'); // nanti pastikan route /login tersedia
-    }
-  }
-}
+      this.$router.push('/login');
+    },
+    goToRegister() {
+      this.$router.push('/register');
+    },
+    typeEffect() {
+      const interval = setInterval(() => {
+        if (this.currentCharIndex < this.fullText.length) {
+          this.typedText += this.fullText[this.currentCharIndex];
+          this.currentCharIndex++;
+        } else {
+          clearInterval(interval);
+        }
+      }, 50);
+    },
+  },
+};
 </script>
 
 <style scoped>
 .landing-page {
   min-height: 100vh;
-  background-color: #2d2d2d;
-  font-family: 'MuseoModerno';
+  font-family: 'MuseoModerno', sans-serif;
+  overflow: hidden;
+  position: relative;
+  background-color: #000;
+}
+
+.bg-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+    url('/images/construction.jpg') center/cover no-repeat;
+  z-index: 0;
+  animation: zoomBackground 30s ease-in-out infinite;
+}
+
+.animate-fade-slide {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeSlideIn 1s forwards ease-out;
+}
+@keyframes fadeSlideIn {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.delay-1 { animation-delay: 0.3s; }
+.delay-2 { animation-delay: 0.6s; }
+.delay-3 { animation-delay: 0.9s; }
+.delay-4 { animation-delay: 1.2s; }
+
+@keyframes zoomBackground {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
 
 .logo-box {
-  font-size: 3rem;
+  font-size: 3.5rem;
   color: white;
+}
+
+.tagline {
+  font-size: 1.1rem;
+  max-width: 80%;
+}
+
+.typing-text::after {
+  content: '|';
+  animation: blink 1s infinite;
+  margin-left: 4px;
+  color: white;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
 
 footer span {
   color: white;
+}
+
+.animate-bounce-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.animate-bounce-hover:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
 }
 </style>
