@@ -89,7 +89,7 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
 .signup-page {
-  background: url('/bg-mount-fix.jpg') center/cover no-repeat;
+  background: url('/images/bg-mount-fix.jpg') center/cover no-repeat;
   font-family: 'Inter', sans-serif;
   min-height: 100vh;
 }

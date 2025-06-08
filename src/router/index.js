@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import LandingPage from '../views/LandingPage.vue';
-import Login from '../components/Login.vue';
+import Login from '../views/Login.vue';
 import MaterialsList from '../views/MaterialList.vue';
 import AddMaterial from '../views/AddMaterial.vue';
 import RegisterCustomer from '../views/RegisterCustomer.vue';
