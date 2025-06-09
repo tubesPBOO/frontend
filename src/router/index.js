@@ -8,6 +8,7 @@ import RegisterCustomer from '../views/RegisterCustomer.vue';
 import RegisterTukang from '../views/RegisterTukang.vue';
 import CustomerList from '../views/CustomerList.vue';
 import CustomerProfile from '../views/CustomerProfile.vue';
+import DashboardAdmin from '../views/DashboardAdmin.vue';
 
 const routes = [
   {
@@ -44,6 +45,11 @@ const routes = [
     path: '/register',
     name: 'Register',
     component: GeneralRegister
+  },
+  {
+    path: '/Dashboard/Admin',
+    name: 'Dashboard Admin',
+    component: DashboardAdmin
   },
   { 
     path: '/customers',
