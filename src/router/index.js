@@ -8,12 +8,10 @@ import RegisterCustomer from '../views/RegisterCustomer.vue';
 import RegisterTukang from '../views/RegisterTukang.vue';
 import CustomerList from '../views/CustomerList.vue';
 import CustomerProfile from '../views/CustomerProfile.vue';
-<<<<<<< HEAD
 import DashboardAdmin from '../views/DashboardAdmin.vue';
-=======
 import HomePage from '@/views/HomePage.vue';
 import Payment from '@/views/Payment.vue';
->>>>>>> d7e191db3b77a67a1718ea1b3f3a784550ce31d8
+import DashboardTukang from '@/views/DashboardTukang.vue';
 
 const routes = [
   {
@@ -65,6 +63,11 @@ const routes = [
     path: '/Dashboard/Admin',
     name: 'Dashboard Admin',
     component: DashboardAdmin
+  },
+  {
+    path: '/Dashboard/Tukang',
+    name: 'Dashboard Tukang',
+    component: DashboardTukang
   },
   { 
     path: '/customers',
