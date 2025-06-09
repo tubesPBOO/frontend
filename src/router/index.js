@@ -8,6 +8,8 @@ import RegisterCustomer from '../views/RegisterCustomer.vue';
 import RegisterTukang from '../views/RegisterTukang.vue';
 import CustomerList from '../views/CustomerList.vue';
 import CustomerProfile from '../views/CustomerProfile.vue';
+import HomePage from '@/views/HomePage.vue';
+import Payment from '@/views/Payment.vue';
 
 const routes = [
   {
@@ -19,6 +21,16 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: Login
+  },
+  {
+    path: '/HomePage',
+    name: 'HomePage',
+    component: HomePage
+  },
+  {
+    path: '/payment',
+    name: 'Payment',
+    component: Payment
   },
   {
     path: '/materials',

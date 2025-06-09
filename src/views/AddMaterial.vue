@@ -30,7 +30,7 @@ export default {
     methods: {
         async submitMaterial() {
             try {
-                const response = await fetch('http://localhost:8080/api/admin/materials', {
+                const response = await fetch('http://localhost:8080/api/admin/addMaterials', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
