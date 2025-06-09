@@ -8,7 +8,12 @@ import RegisterCustomer from '../views/RegisterCustomer.vue';
 import RegisterTukang from '../views/RegisterTukang.vue';
 import CustomerList from '../views/CustomerList.vue';
 import CustomerProfile from '../views/CustomerProfile.vue';
+<<<<<<< HEAD
 import DashboardAdmin from '../views/DashboardAdmin.vue';
+=======
+import HomePage from '@/views/HomePage.vue';
+import Payment from '@/views/Payment.vue';
+>>>>>>> d7e191db3b77a67a1718ea1b3f3a784550ce31d8
 
 const routes = [
   {
@@ -20,6 +25,16 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: Login
+  },
+  {
+    path: '/HomePage',
+    name: 'HomePage',
+    component: HomePage
+  },
+  {
+    path: '/payment',
+    name: 'Payment',
+    component: Payment
   },
   {
     path: '/materials',

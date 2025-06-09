@@ -15,6 +15,7 @@
 
 <script>
 export default {
+<<<<<<< HEAD
   data() {
     return {
       material: {
@@ -35,6 +36,30 @@ export default {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(this.material)
         });
+=======
+    data() {
+        return {
+            material: {
+                name: '',
+                stock: 0,
+                price: 0,
+                ratingCount: 0,
+                totrating: 0.0
+            },
+            responseMessage: ''
+        };
+    },
+    methods: {
+        async submitMaterial() {
+            try {
+                const response = await fetch('http://localhost:8080/api/admin/addMaterials', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(this.material)
+                });
+>>>>>>> d7e191db3b77a67a1718ea1b3f3a784550ce31d8
 
         if (response.ok) {
           const data = await response.json();
