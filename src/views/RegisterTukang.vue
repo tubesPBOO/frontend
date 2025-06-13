@@ -67,10 +67,10 @@ export default {
 
         if (!res.ok) {
           const errText = await res.text();
-          this.message = `Registration failed: ${errText}`;
+          this.message = `Pendaftaran gagal: ${errText}`;
           this.isError = true;
         } else {
-          this.message = 'Registration successful! Redirecting to login...';
+          this.message = 'Pendaftaran berhasil! Mengalihkan ke halaman login...';
           this.isError = false;
           setTimeout(() => this.$router.push('/login'), 2000);
         }

@@ -92,8 +92,6 @@ export default {
     goToLogin() {
       this.$router.push('/login');
     },
-/*************  ✨ Windsurf Command ⭐  *************/
-/*******  4eead552-90ce-41af-a55a-7558415501bf  *******/
     goToRegister() {
       this.$router.push('/register');
     },

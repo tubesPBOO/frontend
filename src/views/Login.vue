@@ -69,17 +69,52 @@ export default {
       username: '',
       password: '',
       showPassword: false,
+      error: null
     };
   },
   methods: {
     togglePassword() {
       this.showPassword = !this.showPassword;
     },
-    login() {
-      alert(`Berhasil login sebagai ${this.username}`);
-      this.$router.push('/'); // Redirect to homepage
-    },
-  },
+    async login() {
+      try {
+        const response = await fetch('http://localhost:8080/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: this.username,
+            pass: this.password
+          }),
+          credentials: 'include' 
+        });
+
+        if (!response.ok) {
+          throw new Error('Login failed');
+        }
+
+        const message = await response.text(); 
+
+        let redirectPath = '/Dashboard/Admin';
+
+        if (message.includes('Admin')) {
+          localStorage.setItem('role', 'admin');
+        } else if (message.includes('Customer')) {
+          localStorage.setItem('role', 'customer');
+          redirectPath = '/Dashboard/Customer';
+        } else if (message.includes('Tukang')) {
+          localStorage.setItem('role', 'tukang');
+          redirectPath = '/Dashboard/Tukang';
+        }
+
+        this.$router.push(redirectPath);
+      } catch (err) {
+        console.error('Login failed:', err);
+        this.error = 'Login gagal. Periksa kredensial Anda.';
+      }
+    }
+  }
 };
 </script>
 
