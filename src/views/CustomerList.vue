@@ -51,9 +51,9 @@ export default {
   min-height: 100vh;
   background: url('/images/ale2.jpg') center/cover no-repeat;
   display: flex;
-  justify-content: center;     /* Tengah horizontal */
-  align-items: flex-start;     /* Atas vertikal */
-  padding: 3rem 1rem;          /* Jarak dari atas */
+  justify-content: center;     
+  align-items: flex-start;     
+  padding: 3rem 1rem;          
   animation: fadeIn 1s ease-in;
 }
 
