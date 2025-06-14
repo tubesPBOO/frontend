@@ -6,6 +6,8 @@
         <input v-model="material.name" placeholder="Nama Material" required />
         <input v-model.number="material.stock" type="number" placeholder="Jumlah Stok" required />
         <input v-model.number="material.price" type="number" placeholder="Harga per Unit (Rp)" required />
+        <!--<input v-model.number="material.totrating" type="number" placeholder=""/>-->
+        <!--<input v-model.number="material.ratingCount" type="number" placeholder=""/>-->
         <button type="submit">Tambah Material</button>
       </form>
       <p v-if="responseMessage" class="response">{{ responseMessage }}</p>
@@ -15,14 +17,15 @@
 
 <script>
 export default {
+    name: 'addMaterials',
     data() {
         return {
             material: {
                 name: '',
-                stock: 0,
-                price: 0,
+                stock: '',
+                price: '',
                 ratingCount: 0,
-                totrating: 0.0
+                totrating: 0
             },
             responseMessage: ''
         };
@@ -40,10 +43,12 @@ export default {
 
         if (response.ok) {
           const data = await response.json();
-          this.responseMessage = `Material berhasil ditambahkan! ID: ${data.id}`;
+          this.responseMessage = `Material berhasil ditambahkan!`;
           this.material.name = '';
-          this.material.stock = 0;
-          this.material.price = 0;
+          this.material.stock = '';
+          this.material.price = '';
+          this.material.totrating = 0;
+          this.material.ratingCount = 0;
         } else {
           const errText = await response.text();
           this.responseMessage = `Gagal menambahkan! : ${errText}`;
@@ -59,7 +64,7 @@ export default {
 <style scoped>
 .material-page {
   min-height: 100vh;
-  background: url('/images/ale.jpg') center/cover no-repeat; 
+  background: url('/images/Nordwood.jpg') center/cover no-repeat; 
   display: flex;
   align-items: center;
   justify-content: center;

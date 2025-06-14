@@ -18,9 +18,11 @@
             <td>{{ cust.email }}</td>
             <td>{{ cust.phoneNumber }}</td>
             <td>{{ cust.address }}</td>
-            <td>
-              <router-link :to="`/customer/${cust.name}`" class="action-button">Lihat</router-link>
-            </td>
+           <td>
+            <button @click="deleteCustomer(cust.name)" class="action-button">
+              Delete
+            </button>
+          </td>
           </tr>
         </tbody>
       </table>
@@ -33,23 +35,47 @@ export default {
   data() {
     return {
       customers: [],
+      Name:''
     };
   },
   async mounted() {
     try {
-      const res = await fetch('/api/customers');
+      const res = await fetch('http://localhost:8080/api/admin/getCustomersList');
       this.customers = await res.json();
     } catch (err) {
       console.error('Gagal mengambil data pelanggan:', err);
     }
   },
+   methods: {
+    async deleteCustomer(name) {
+      const confirmed = confirm(`Apakah kamu yakin ingin menghapus pelanggan bernama "${name}"?`);
+      if (!confirmed) return;
+
+      try {
+        const response = await fetch(`http://localhost:8080/api/admin/deleteUser/${encodeURIComponent(name)}`, {
+          method: 'DELETE',
+        });
+
+        if (response.ok) {
+          // Hapus dari daftar lokal setelah sukses
+          this.customers = this.customers.filter(c => c.name !== name);
+          alert("Pelanggan berhasil dihapus");
+        } else {
+          alert("Gagal menghapus pelanggan");
+        }
+      } catch (err) {
+        console.error('Error saat menghapus pelanggan:', err);
+        alert("Terjadi kesalahan saat menghapus pelanggan");
+      }
+    }
+  }
 };
 </script>
 
 <style scoped>
 .customer-page {
   min-height: 100vh;
-  background: url('/images/ale2.jpg') center/cover no-repeat;
+  background: url('/images/Nordwood.jpg') center/cover no-repeat;
   display: flex;
   justify-content: center;     
   align-items: flex-start;     

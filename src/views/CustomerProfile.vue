@@ -25,7 +25,7 @@ export default {
   async mounted() {
     try {
       const name = this.$route.params.name;
-      const res = await fetch(`/api/customers/${encodeURIComponent(name)}`);
+      const res = await fetch(`http://localhost:8080/api/customers/${encodeURIComponent(name)}`);
       this.customer = await res.json();
     } catch (err) {
       console.error('Gagal mengambil data pelanggan:', err);
