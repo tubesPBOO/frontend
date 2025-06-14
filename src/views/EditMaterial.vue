@@ -13,10 +13,6 @@
       <input v-model.number="stock" id="stock" type="number" placeholder="Masukkan stok baru" />
       <button @click="updateStock">Update Stok</button>
 
-      <label for="rating">Rating Baru</label>
-      <input v-model.number="rating" id="rating" type="number" step="0.1" placeholder="Masukkan rating baru" />
-      <button @click="updateRating">Update Rating</button>
-
       <p v-if="successMessage" class="response">{{ successMessage }}</p>
     </div>
   </div>
@@ -36,7 +32,7 @@ export default {
   methods: {
     async updatePrice() {
       try {
-        const res = await fetch(`/api/materials/price/${encodeURIComponent(this.materialName)}`, {
+        const res = await fetch(`http://localhost:8080/api/admin/updatePrice/${encodeURIComponent(this.materialName)}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ price: this.price }),
@@ -49,26 +45,13 @@ export default {
     },
     async updateStock() {
       try {
-        const res = await fetch(`/api/materials/price/${encodeURIComponent(this.materialName)}`, {
+        const res = await fetch(`http://localhost:8080/api/admin/updateStock/${encodeURIComponent(this.materialName)}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ stock: this.stock }),
         });
         if (!res.ok) throw new Error('Gagal memperbarui stok');
         this.successMessage = 'Stok berhasil diperbarui';
-      } catch (err) {
-        alert(err.message);
-      }
-    },
-    async updateRating() {
-      try {
-        const res = await fetch(`/api/materials/rating/${encodeURIComponent(this.materialName)}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ totrating: this.rating }),
-        });
-        if (!res.ok) throw new Error('Gagal memperbarui rating');
-        this.successMessage = 'Rating berhasil diperbarui';
       } catch (err) {
         alert(err.message);
       }
@@ -80,7 +63,7 @@ export default {
 <style scoped>
 .edit-material-page {
   min-height: 100vh;
-  background: url('/images/ale2.jpg') center/cover no-repeat;
+  background: url('/images/Nordwood.jpg') center/cover no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;

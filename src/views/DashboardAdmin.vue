@@ -34,7 +34,7 @@ export default {
 <style scoped>
 .admin-dashboard-wrapper {
   min-height: 100vh;
-  background: url('/images/ale2.jpg') no-repeat center center / cover;
+  background: url('/images/Nordwood.jpg') no-repeat center center / cover;
   display: flex;
   justify-content: center;
   align-items: center;
