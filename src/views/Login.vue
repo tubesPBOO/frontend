@@ -102,7 +102,7 @@ export default {
           localStorage.setItem('role', 'admin');
         } else if (message.includes('Customer')) {
           localStorage.setItem('role', 'customer');
-          redirectPath = '/Dashboard/Customer';
+          redirectPath = '/HomePage';
         } else if (message.includes('Tukang')) {
           localStorage.setItem('role', 'tukang');
           redirectPath = '/Dashboard/Tukang';
