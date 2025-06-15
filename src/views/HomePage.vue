@@ -1,20 +1,32 @@
 <template>
     <div>
         <!-- NAVBAR -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 py-3 fixed-top">
+        <nav class="navbar navbar-expand-lg navbar-white bg-white px-4 py-3 fixed-top">
             <div class="container-fluid">
                 <a class="navbar-brand fw-bold text-warning" href="#">
-                    <span class="text-white">Tukang.In</span>
+                    <span class="text-dark">Tukang.In</span>
                 </a>
+
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+
                     <li class="nav-item">
                         <a class="nav-link" href="#">PROJECTS</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">CART</a>
+                        <!-- Cart Icon -->
+                        <a class="nav-link position-relative" href="#" title="Cart">
+                            <i class="fas fa-cart-shopping fa-lg"></i>
+                            <span
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {{ cart.length }}
+                            </span>
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">PROFILE</a>
+                        <!-- User Icon -->
+                        <a class="nav-link" href="#" title="Profile">
+                            <i class="fas fa-user fa-lg"></i>
+                        </a>
                     </li>
                 </ul>
             </div>
@@ -24,26 +36,81 @@
         <header class="hero-section text-center text-white d-flex align-items-center justify-content-center">
             <div>
                 <h1 class="display-4 fw-bold">
-                    LEADERS IN QUALITY<br />CONSTRUCTION AND INFRASTRUCTURE
+                    IN JAWA<br />WE TRUST
                 </h1>
-                <p class="lead mt-3">"Building the future, restoring the past."</p>
-                <div class="mt-4">
-                    <i class="bi bi-chevron-double-down fs-2 text-white"></i>
-                </div>
+                <p class="lead mt-3">"JAWA JAWA JAWA"</p>
             </div>
         </header>
 
         <div class="container py-5">
             <!-- My Projects -->
             <div class="mb-5">
-                <h4 class="fw-semibold mb-3">My Projects</h4>
+                <!-- Header Section with the 'My Projects' title and Add Project Button aligned -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="fw-semibold">My Projects</h4>
+                    <button class="btn btn-primary" @click="showAddProject = true">Add Project</button>
+                </div>
+
+                <!-- Add Project Modal -->
+                <div v-if="showAddProject && !loading" class="modal d-block" tabindex="-1" role="dialog">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Create New Project</h5>
+                                <button type="button" class="btn-close" @click="showAddProject = false"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form @submit.prevent="addProject">
+                                    <div class="mb-3">
+                                        <label class="form-label">Project Name</label>
+                                        <input v-model="newProject.name" type="text" class="form-control" required />
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Workers Needed</label>
+                                        <input v-model="newProject.jumTukang" type="number" class="form-control"
+                                            required />
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Duration (days)</label>
+                                        <input v-model="newProject.durasi" type="number" class="form-control"
+                                            required />
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Description</label>
+                                        <textarea v-model="newProject.deskripsi" class="form-control"
+                                            required></textarea>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">City</label>
+                                        <input v-model="newProject.alamatKota" type="text" class="form-control"
+                                            required />
+                                    </div>
+
+                                    <button type="submit" class="btn btn-success w-100">Submit</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fullscreen Loading Overlay -->
+                <div v-if="loading" class="fullscreen-loader">
+                    <div class="loader-spanne-20">
+                        <span></span><span></span><span></span>
+                        <span></span><span></span><span></span><span></span>
+                    </div>
+                </div>
 
                 <div v-if="projects.length > 0" class="row row-cols-1 row-cols-md-2 g-4">
                     <div v-for="project in projects" :key="project.id" class="col">
                         <div class="card shadow-sm position-relative h-100 overflow-hidden"
                             @mouseover="hoveredProject = project" @mouseleave="hoveredProject = null">
                             <!-- Project Image -->
-                            <img :src="'/images/ale.jpg'" alt="Project Image" class="card-img-top img-fluid"
+                            <img :src="'/images/my-project.jpg'" alt="Project Image" class="card-img-top img-fluid"
                                 style="object-fit: cover; height: 200px" />
 
                             <!-- Project Name (always visible) -->
@@ -75,6 +142,7 @@
 
                 <div v-else class="text-muted">Kamu belum memiliki proyek apa pun.</div>
             </div>
+
 
 
             <!-- Search and Cart Summary -->
@@ -110,7 +178,7 @@
             </div>
 
             <!-- Cart Modal -->
-            <div v-if="showCart" class="modal d-block" tabindex="-1">
+            <div v-if="showCart && !isPaying" class="modal d-block" tabindex="-1">
                 <div class="modal-dialog modal-lg modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -123,7 +191,7 @@
                                     class="list-group-item d-flex justify-content-between align-items-center">
                                     <div>
                                         <strong>{{ item.name }} {{ item.quantity > 1 ? `x${item.quantity}` : ''
-                                            }}</strong><br />
+                                        }}</strong><br />
                                         <small>Rp{{ (item.price * item.quantity).toLocaleString('id-ID') }}</small>
                                     </div>
                                     <button class="btn btn-sm btn-danger" @click="removeFromCart(index)">Remove</button>
@@ -131,64 +199,31 @@
                             </ul>
                             <div class="mt-3 text-end">
                                 <strong>Total: Rp{{ cartTotal }}</strong>
-                                <router-link to="/payment" class="btn btn-success mt-3 w-100" @click.native="storeCart">
-                                    Proceed to Payment
-                                </router-link>
+                                <button class="btn btn-success mt-3 w-100" @click="proceedToPayment"
+                                    :disabled="isPaying">
+                                    <span v-if="isPaying">
+                                        <div class="loader-spanne-20 d-inline-block me-2"
+                                            style="transform: scale(0.7);"></div>
+                                        Processing...
+                                    </span>
+                                    <span v-else>
+                                        Proceed to Payment
+                                    </span>
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Header Section with the 'Add Project' Button -->
-            <div class="header">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h1>Tukang.In</h1>
-                    <button class="btn btn-primary" @click="showAddProject = true">Add Project</button>
+            <!-- Fullscreen Loader Overlay -->
+            <div v-if="isPaying" class="fullscreen-loader">
+                <div class="loader-spanne-20">
+                    <span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span>
                 </div>
             </div>
 
-            <!-- Add Project Modal -->
-            <div v-if="showAddProject" class="modal d-block" tabindex="-1" role="dialog">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Create New Project</h5>
-                            <button type="button" class="btn-close" @click="showAddProject = false"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form @submit.prevent="addProject">
-                                <div class="mb-3">
-                                    <label class="form-label">Project Name</label>
-                                    <input v-model="newProject.name" type="text" class="form-control" required />
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label">Workers Needed</label>
-                                    <input v-model="newProject.jumTukang" type="number" class="form-control" required />
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label">Duration (days)</label>
-                                    <input v-model="newProject.durasi" type="number" class="form-control" required />
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label">Description</label>
-                                    <textarea v-model="newProject.deskripsi" class="form-control" required></textarea>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label">City</label>
-                                    <input v-model="newProject.alamatKota" type="text" class="form-control" required />
-                                </div>
-
-                                <button type="submit" class="btn btn-success w-100">Submit</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </template>
@@ -201,6 +236,7 @@ export default {
             projects: [],
             showAddProject: false,
             showCart: false,
+            loading: false,
             searchTerm: '',
             newProject: {
                 name: '',
@@ -209,6 +245,7 @@ export default {
                 duration: 0,
             },
             cart: [],
+            isPaying: false,
             hoveredProject: null,
             searchTerm: '',
             materials: [],
@@ -271,6 +308,8 @@ export default {
 
     methods: {
         async addProject() {
+            this.loading = true; // start loading
+
             const payload = {
                 name: this.newProject.name,
                 deskripsi: this.newProject.deskripsi,
@@ -296,10 +335,10 @@ export default {
                 }
 
                 const resultText = await response.text();
-                console.log('Server response:', resultText);
-                alert(resultText);
+                console.log('✅ Server response:', resultText);
+                alert('✅ ' + resultText);
 
-                this.showAddProject = false;
+                // Reset form dan tutup modal
                 this.newProject = {
                     name: '',
                     deskripsi: '',
@@ -309,11 +348,19 @@ export default {
                     listTukang: [],
                     status: 'Looking for Tukang'
                 };
+                this.showAddProject = false;
+
+                // Optional: refresh project list
+                if (this.fetchMyProjects) await this.fetchMyProjects();
+
             } catch (error) {
-                console.error('Error adding project:', error);
-                alert('Failed to add project: ' + error.message);
+                console.error('❌ Error adding project:', error);
+                alert('❌ Failed to add project: ' + error.message);
+            } finally {
+                this.loading = false; // stop loading
             }
-        },
+        }
+        ,
         async fetchMyProjects() {
             try {
                 const response = await fetch('http://localhost:8080/api/customers/getMyProject', {
@@ -351,6 +398,23 @@ export default {
                 console.error('Fetch error:', err);
             }
         },
+        async proceedToPayment() {
+            this.isPaying = true;
+            try {
+                this.storeCart();
+
+                await new Promise(resolve => setTimeout(resolve, 1500)); // simulasi loading
+
+                this.showCart = false;
+
+                // Redirect ke payment
+                this.$router.push('/payment'); // <-- ini yang nge-trigger route
+            } catch (e) {
+                alert('❌ Gagal lanjut ke pembayaran: ' + e.message);
+            } finally {
+                this.isPaying = false;
+            }
+        },
         addToCart(material) {
             this.cart.push(material);
             localStorage.setItem('cart', JSON.stringify(this.cart));
@@ -372,6 +436,12 @@ export default {
         },
     },
     mounted() {
+        const storedCart = localStorage.getItem('cart');
+        if (storedCart) {
+            this.cart = JSON.parse(storedCart);
+        }
+
+        this.fetchMyProjects();
         this.fetchMaterials();
         this.loadCart();
     },
@@ -379,6 +449,17 @@ export default {
 </script>
 
 <style scoped>
+.navbar,
+.hero-section,
+.container {
+    font-family: 'Poppins', sans-serif;
+}
+
+.navbar-brand {
+    font-family: 'MuseoModerno', sans-serif;
+    font-size: 1.2rem;
+}
+
 .card {
     transition: transform 0.3s ease;
 }
@@ -405,11 +486,101 @@ export default {
 
 .hero-section {
     height: 100vh;
-    background: url('/images/construction.jpg') center/cover no-repeat;
+    background: url('/images/Nordwood.jpg') center/cover no-repeat;
     padding-top: 80px;
 }
 
 nav.navbar {
     z-index: 1000;
+}
+
+.fullscreen-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1050;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(20, 20, 20, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loader-spanne-20 {
+    position: relative;
+    width: 100px;
+    height: 30px;
+    padding: 0;
+}
+
+.loader-spanne-20>span {
+    position: absolute;
+    right: 0;
+    width: 3px;
+    height: 30px;
+    background-color: rgb(116, 204, 197);
+    display: block;
+    border-radius: 3px;
+    transform-origin: 50% 100%;
+    animation: move 2.8s linear infinite;
+}
+
+.loader-spanne-20>span:nth-child(1) {
+    animation-delay: -0.4s;
+}
+
+.loader-spanne-20>span:nth-child(2) {
+    animation-delay: -0.8s;
+}
+
+.loader-spanne-20>span:nth-child(3) {
+    animation-delay: -1.2s;
+}
+
+.loader-spanne-20>span:nth-child(4) {
+    animation-delay: -1.6s;
+}
+
+.loader-spanne-20>span:nth-child(5) {
+    animation-delay: -2s;
+}
+
+.loader-spanne-20>span:nth-child(6) {
+    animation-delay: -2.4s;
+}
+
+.loader-spanne-20>span:nth-child(7) {
+    animation-delay: -2.8s;
+}
+
+@keyframes move {
+    0% {
+        opacity: 0;
+        transform: translateX(0px) rotate(0deg);
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    40% {
+        transform: translateX(-40px) rotate(0deg);
+    }
+
+    50% {
+        opacity: 1;
+        transform: translateX(-50px) rotate(22deg);
+    }
+
+    85% {
+        opacity: 1;
+        transform: translateX(-85px) rotate(60deg);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateX(-100px) rotate(65deg);
+    }
 }
 </style>
