@@ -59,7 +59,6 @@
       <div v-else class="row g-4">
         <div v-for="project in filteredProjects" :key="project.id" class="col-md-6 col-lg-4">
           <div class="project-card card-bg h-100 position-relative overflow-hidden rounded shadow-sm">
-            <span class="badge bg-success position-absolute top-0 end-0 m-3 z-1">Baru</span>
             <div class="p-4">
               <h4 class="fw-semibold mb-2">{{ project.title }}</h4>
               <p class="text-muted mb-2 clamp-text">{{ project.description }}</p>
@@ -126,7 +125,7 @@ export default {
   name: 'TukangDashboard',
   data() {
     return {
-      username: 'TukangUser',
+      username: 'Memuat...', 
       isLoading: true,
       projects: [],
       joinedProject: null,
@@ -137,7 +136,7 @@ export default {
         message: '',
         type: 'success'
       },
-      selectedProject: null // Store selected project before join
+      selectedProject: null
     };
   },
   computed: {
@@ -152,36 +151,69 @@ export default {
     }
   },
   mounted() {
+    this.loadCurrentUser(); 
     this.fetchProjects();
     this.loadJoinedProject();
   },
   methods: {
-    async fetchProjects() {
-      this.isLoading = true;
+    async loadCurrentUser() {
       try {
-        const response = await fetch('http://localhost:8080/api/tukang/getAllProjects', {
+        const response = await fetch('http://localhost:8080/api/tukang/getCurrentUser', {
           method: 'GET',
           credentials: 'include'
         });
 
-        if (!response.ok) throw new Error('Gagal memuat proyek');
+        if (!response.ok) {
+          throw new Error('Gagal memuat akun pengguna');
+        }
 
-        const data = await response.json();
-
-        this.projects = data.map(p => ({
-          id: p.id,
-          title: p.name,
-          description: p.deskripsi || 'Deskripsi tidak tersedia.',
-          location: p.alamatKota || 'Lokasi tidak tersedia.'
-        }));
-
+        const tukang = await response.json();
+        this.username = tukang.name; 
       } catch (error) {
-        console.error('Error fetching projects:', error);
-        this.showToast('error', 'Gagal memuat proyek dari server.');
-      } finally {
-        this.isLoading = false;
+        console.error('Failed to load current user:', error);
+        this.showToast('error', 'Silakan login ulang.');
+        setTimeout(() => {
+          this.$router.push('/login'); 
+        }, 1500);
       }
     },
+
+    async fetchProjects() {
+  this.isLoading = true;
+  try {
+    const response = await fetch('http://localhost:8080/api/tukang/getAllProjects', {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    if (!response.ok) throw new Error('Gagal memuat proyek');
+
+    const data = await response.json();
+
+    // Map and filter projects
+    this.projects = data
+      .filter(p => p.status === 'Looking for Tukang')
+      .filter(p => p.listTukang?.length < p.jumTukang)
+      .map(p => ({
+        id: p.id,
+        title: p.name,
+        description: p.deskripsi || 'Deskripsi tidak tersedia.',
+        location: p.alamatKota || 'Lokasi tidak tersedia.',
+        customerName: p.customerId || 'Customer Tidak Diketahui',
+        duration: p.durasi,
+        price: p.price,
+        tukangCount: p.jumTukang,
+        currentTukang: p.listTukang?.length || 0,
+        status: p.status
+      }));
+
+  } catch (error) {
+    console.error('Error fetching projects:', error);
+    this.showToast('error', 'Gagal memuat proyek dari server.');
+  } finally {
+    this.isLoading = false;
+  }
+},
 
     async loadJoinedProject() {
       try {
@@ -215,7 +247,6 @@ export default {
 
       this.selectedProject = project;
 
-      // Show Bootstrap modal
       const modalEl = document.getElementById('joinModal');
       if (!modalEl) {
         console.error("Modal element not found!");
@@ -263,7 +294,7 @@ export default {
       this.isMobileMenuOpen = !this.isMobileMenuOpen;
     },
     goToProfile() {
-      alert('Navigating to profile...');
+      this.$router.push('/Profile/Tukang');
     },
     showToast(type, message) {
       this.toast = {
