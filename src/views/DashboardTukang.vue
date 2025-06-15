@@ -130,56 +130,102 @@ export default {
   },
   mounted() {
     this.fetchProjects();
+    this.loadJoinedProject();
   },
   methods: {
-    fetchProjects() {
-      this.isLoading = true;
-      setTimeout(() => {
-        this.projects = [
-          {
-            id: 1,
-            title: 'Renovasi Dapur',
-            description: 'Proyek renovasi dapur rumah dengan waktu pengerjaan 2 minggu.',
-            location: 'Jakarta Selatan',
-            customerName: 'Budi'
-          },
-          {
-            id: 2,
-            title: 'Pengecatan Rumah',
-            description: 'Pengecatan ulang seluruh rumah bagian luar.',
-            location: 'Bandung',
-            customerName: 'Sari'
-          },
-          {
-            id: 3,
-            title: 'Perbaikan Atap',
-            description: 'Perbaikan atap bocor di rumah tinggal.',
-            location: 'Surabaya',
-            customerName: 'Andi'
-          },
-          {
-            id: 4,
-            title: 'Pemasangan Listrik Baru',
-            description: 'Instalasi listrik untuk bangunan baru.',
-            location: 'Jakarta Selatan',
-            customerName: 'Rina'
-          }
-        ];
-        this.isLoading = false;
-      }, 800);
-    },
-    handleJoin(project) {
+    async fetchProjects() {
+  this.isLoading = true;
+  try {
+    const response = await fetch('http://localhost:8080/api/tukang/getAllProjects', {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    if (!response.ok) throw new Error('Gagal memuat proyek');
+
+    const data = await response.json();
+
+    // Map backend fields to frontend expectations
+    this.projects = data.map(p => ({
+      id: p.id,
+      title: p.name,
+      description: p.deskripsi || 'Deskripsi tidak tersedia.',
+      location: p.alamatKota || 'Lokasi tidak tersedia.',
+      customerName: p.customerId || 'Customer Tidak Diketahui',
+      duration: p.durasi,
+      price: p.price,
+      tukangCount: p.jumTukang,
+      currentTukang: p.listTukang.length,
+      status: p.status
+    }));
+
+  } catch (error) {
+    console.error('Error fetching projects:', error);
+    this.showToast('error', 'Gagal memuat proyek dari server.');
+  } finally {
+    this.isLoading = false;
+  }
+  } ,
+
+    async loadJoinedProject() {
+  try {
+    const response = await fetch('http://localhost:8080/api/tukang/getMyProject', {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    if (!response.ok) return;
+
+    const data = await response.json();
+    if (data && data.length > 0) {
+      const project = data[0];
+      this.joinedProject = {
+        id: project.id,
+        title: project.name,
+        description: project.deskripsi,
+        location: project.alamatKota,
+        customerName: project.customerId
+      };
+    }
+  } catch (err) {
+    console.error('Failed to load joined project:', err);
+  }
+},
+
+    async handleJoin(project) {
       if (this.joinedProject) {
         this.showToast('error', 'Anda hanya bisa bergabung satu proyek.');
         return;
       }
 
       const confirmed = window.confirm(`Yakin ingin bergabung dengan proyek "${project.title}"?`);
-      if (confirmed) {
+      if (!confirmed) return;
+
+      try {
+        const response = await fetch('/api/tukang/assignSelf', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ name: project.title }),
+          credentials: 'include'
+        });
+
+        if (!response.ok) {
+          const errorMsg = await response.text();
+          throw new Error(errorMsg || 'Gagal bergabung ke proyek');
+        }
+
+        // Success
         this.joinedProject = { ...project };
+        localStorage.setItem('joinedProject', JSON.stringify(this.joinedProject));
         this.showToast('success', `Berhasil bergabung ke proyek: ${project.title}`);
+      } catch (error) {
+        console.error('Join failed:', error);
+        this.showToast('error', error.message || 'Gagal bergabung ke proyek.');
       }
     },
+
     toggleMobileMenu() {
       this.isMobileMenuOpen = !this.isMobileMenuOpen;
     },
