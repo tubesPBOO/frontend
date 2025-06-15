@@ -14,7 +14,7 @@ import Payment from '@/views/Payment.vue';
 import DashboardTukang from '@/views/DashboardTukang.vue';
 import ProfileTukang from '@/views/ProfileTukang.vue';
 import EditProfileTukang from '@/views/EditProfileTukang.vue';
-
+import ProfileCustomer from '../views/ProfileCustomer.vue';
 const routes = [
   {
     path: '/',
@@ -80,6 +80,12 @@ const routes = [
     path: '/Profile/Tukang/Edit',
     name: 'Edit Profile Tukang',
     component: EditProfileTukang
+  },
+  {
+    path: '/customer/profile',
+    name: 'ProfileCustomer',
+    component: ProfileCustomer,
+    meta: { requiresAuth: true }
   },
   {
     path: '/customers',

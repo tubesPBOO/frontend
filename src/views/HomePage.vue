@@ -23,7 +23,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <router-link class="nav-link" to="/customer/edit-profile" title="Edit Profile">
+                        <router-link to="/customer/profile" class="nav-link">
                             <i class="fas fa-user fa-lg"></i>
                         </router-link>
                     </li>
@@ -190,7 +190,7 @@
                                     class="list-group-item d-flex justify-content-between align-items-center">
                                     <div>
                                         <strong>{{ item.name }} {{ item.quantity > 1 ? `x${item.quantity}` : ''
-                                            }}</strong><br />
+                                        }}</strong><br />
                                         <small>Rp{{ (item.price * item.quantity).toLocaleString('id-ID') }}</small>
                                     </div>
                                     <button class="btn btn-sm btn-danger" @click="removeFromCart(index)">Remove</button>
