@@ -12,6 +12,8 @@ import DashboardAdmin from '../views/DashboardAdmin.vue';
 import HomePage from '@/views/HomePage.vue';
 import Payment from '@/views/Payment.vue';
 import DashboardTukang from '@/views/DashboardTukang.vue';
+import ProfileTukang from '@/views/ProfileTukang.vue';
+import EditProfileTukang from '@/views/EditProfileTukang.vue';
 
 const routes = [
   {
@@ -68,6 +70,16 @@ const routes = [
     path: '/Dashboard/Tukang',
     name: 'Dashboard Tukang',
     component: DashboardTukang
+  },
+  {
+    path: '/Profile/Tukang',
+    name: 'Profile Tukang',
+    component: ProfileTukang
+  },
+  {
+    path: '/Profile/Tukang/Edit',
+    name: 'Edit Profile Tukang',
+    component: EditProfileTukang
   },
   { 
     path: '/customers',
