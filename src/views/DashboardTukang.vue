@@ -64,7 +64,6 @@
               <h4 class="fw-semibold mb-2">{{ project.title }}</h4>
               <p class="text-muted mb-2 clamp-text">{{ project.description }}</p>
               <p class="small text-secondary mb-1"><i class="bi bi-geo-alt me-1"></i> {{ project.location }}</p>
-              <p class="small text-secondary"><i class="bi bi-person-fill me-1"></i> Dibuat oleh: {{ project.customerName }}</p>
 
               <!-- Join Button with Disabled State -->
               <button
@@ -85,6 +84,29 @@
         <p class="fs-5">Belum ada proyek tersedia untuk lokasi ini.</p>
         <button class="btn btn-outline-dark mt-2 rounded-pill" @click="selectedLocation = ''">Lihat Semua Lokasi</button>
       </div>
+
+      <!-- Join Confirmation Modal -->
+      <div class="modal fade" id="joinModal" tabindex="-1" aria-labelledby="joinModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content bg-white text-dark rounded shadow-lg">
+            <div class="modal-header border-0">
+              <h5 class="modal-title fw-bold" id="joinModalLabel">Konfirmasi Bergabung</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p><strong>Nama Proyek:</strong> {{ selectedProject?.title }}</p>
+              <p><strong>Lokasi:</strong> {{ selectedProject?.location }}</p>
+              <p><strong>Deskripsi:</strong> {{ selectedProject?.description }}</p>
+              <p class="text-muted small">Anda hanya bisa bergabung dengan satu proyek.</p>
+            </div>
+            <div class="modal-footer border-0">
+              <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Batal</button>
+              <button type="button" class="btn btn-success rounded-pill px-4" @click="confirmJoin">Gabung Proyek</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </section>
 
     <!-- Toast Notification -->
@@ -114,7 +136,8 @@ export default {
         show: false,
         message: '',
         type: 'success'
-      }
+      },
+      selectedProject: null // Store selected project before join
     };
   },
   computed: {
@@ -134,80 +157,86 @@ export default {
   },
   methods: {
     async fetchProjects() {
-  this.isLoading = true;
-  try {
-    const response = await fetch('http://localhost:8080/api/tukang/getAllProjects', {
-      method: 'GET',
-      credentials: 'include'
-    });
+      this.isLoading = true;
+      try {
+        const response = await fetch('http://localhost:8080/api/tukang/getAllProjects', {
+          method: 'GET',
+          credentials: 'include'
+        });
 
-    if (!response.ok) throw new Error('Gagal memuat proyek');
+        if (!response.ok) throw new Error('Gagal memuat proyek');
 
-    const data = await response.json();
+        const data = await response.json();
 
-    // Map backend fields to frontend expectations
-    this.projects = data.map(p => ({
-      id: p.id,
-      title: p.name,
-      description: p.deskripsi || 'Deskripsi tidak tersedia.',
-      location: p.alamatKota || 'Lokasi tidak tersedia.',
-      customerName: p.customerId || 'Customer Tidak Diketahui',
-      duration: p.durasi,
-      price: p.price,
-      tukangCount: p.jumTukang,
-      currentTukang: p.listTukang.length,
-      status: p.status
-    }));
+        this.projects = data.map(p => ({
+          id: p.id,
+          title: p.name,
+          description: p.deskripsi || 'Deskripsi tidak tersedia.',
+          location: p.alamatKota || 'Lokasi tidak tersedia.'
+        }));
 
-  } catch (error) {
-    console.error('Error fetching projects:', error);
-    this.showToast('error', 'Gagal memuat proyek dari server.');
-  } finally {
-    this.isLoading = false;
-  }
-  } ,
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+        this.showToast('error', 'Gagal memuat proyek dari server.');
+      } finally {
+        this.isLoading = false;
+      }
+    },
 
     async loadJoinedProject() {
-  try {
-    const response = await fetch('http://localhost:8080/api/tukang/getMyProject', {
-      method: 'GET',
-      credentials: 'include'
-    });
+      try {
+        const response = await fetch('http://localhost:8080/api/tukang/getMyProject', {
+          method: 'GET',
+          credentials: 'include'
+        });
 
-    if (!response.ok) return;
+        if (!response.ok) return;
 
-    const data = await response.json();
-    if (data && data.length > 0) {
-      const project = data[0];
-      this.joinedProject = {
-        id: project.id,
-        title: project.name,
-        description: project.deskripsi,
-        location: project.alamatKota,
-        customerName: project.customerId
-      };
-    }
-  } catch (err) {
-    console.error('Failed to load joined project:', err);
-  }
-},
+        const data = await response.json();
+        if (data && data.length > 0) {
+          const project = data[0];
+          this.joinedProject = {
+            id: project.id,
+            title: project.name,
+            description: project.deskripsi,
+            location: project.alamatKota
+          };
+        }
+      } catch (err) {
+        console.error('Failed to load joined project:', err);
+      }
+    },
 
-    async handleJoin(project) {
+    handleJoin(project) {
       if (this.joinedProject) {
         this.showToast('error', 'Anda hanya bisa bergabung satu proyek.');
         return;
       }
 
-      const confirmed = window.confirm(`Yakin ingin bergabung dengan proyek "${project.title}"?`);
-      if (!confirmed) return;
+      this.selectedProject = project;
+
+      // Show Bootstrap modal
+      const modalEl = document.getElementById('joinModal');
+      if (!modalEl) {
+        console.error("Modal element not found!");
+        this.showToast('error', "Gagal menampilkan konfirmasi.");
+        return;
+      }
+
+      const modal = new bootstrap.Modal(modalEl);
+      modal.show();
+    },
+
+    async confirmJoin() {
+      if (!this.selectedProject) return;
 
       try {
-        const response = await fetch('/api/tukang/assignSelf', {
+        const response = await fetch('http://localhost:8080/api/tukang/assignSelf', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ name: project.title }),
+          body: JSON.stringify({ name: this.selectedProject.title }),
           credentials: 'include'
         });
 
@@ -216,13 +245,17 @@ export default {
           throw new Error(errorMsg || 'Gagal bergabung ke proyek');
         }
 
-        // Success
-        this.joinedProject = { ...project };
+        this.joinedProject = { ...this.selectedProject };
         localStorage.setItem('joinedProject', JSON.stringify(this.joinedProject));
-        this.showToast('success', `Berhasil bergabung ke proyek: ${project.title}`);
+        this.showToast('success', `Berhasil bergabung ke proyek: ${this.selectedProject.title}`);
+
       } catch (error) {
         console.error('Join failed:', error);
         this.showToast('error', error.message || 'Gagal bergabung ke proyek.');
+      } finally {
+        this.selectedProject = null;
+        const modal = bootstrap.Modal.getInstance(document.getElementById('joinModal'));
+        if (modal) modal.hide();
       }
     },
 
@@ -325,7 +358,6 @@ export default {
   opacity: 1;
   animation: slideIn 0.3s ease, fadeOut 3s ease forwards;
 }
-
 .toast-notification.success {
   background: #16a34a;
 }
@@ -344,10 +376,7 @@ export default {
   }
 }
 @keyframes fadeOut {
-  0% {
-    opacity: 1;
-  }
-  90% {
+  0%, 90% {
     opacity: 1;
   }
   100% {
