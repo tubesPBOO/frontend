@@ -12,7 +12,9 @@ import DashboardAdmin from '../views/DashboardAdmin.vue';
 import HomePage from '@/views/HomePage.vue';
 import Payment from '@/views/Payment.vue';
 import DashboardTukang from '@/views/DashboardTukang.vue';
-import TukangList from '../views/TukangList.vue';
+import ProfileTukang from '@/views/ProfileTukang.vue';
+import EditProfileTukang from '@/views/EditProfileTukang.vue';
+import ProfileCustomer from '../views/ProfileCustomer.vue';
 const routes = [
   {
     path: '/',
@@ -69,7 +71,23 @@ const routes = [
     name: 'Dashboard Tukang',
     component: DashboardTukang
   },
-  { 
+  {
+    path: '/Profile/Tukang',
+    name: 'Profile Tukang',
+    component: ProfileTukang
+  },
+  {
+    path: '/Profile/Tukang/Edit',
+    name: 'Edit Profile Tukang',
+    component: EditProfileTukang
+  },
+  {
+    path: '/customer/profile',
+    name: 'ProfileCustomer',
+    component: ProfileCustomer,
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/customers',
     name: 'CustomerList',
     component: CustomerList
@@ -85,24 +103,29 @@ const routes = [
     component: TukangList
   },
   {
-  path: '/materials/edit',
-  name: 'EditMaterial',
-  component: () => import('@/views/EditMaterial.vue')
+    path: '/materials/edit',
+    name: 'EditMaterial',
+    component: () => import('@/views/EditMaterial.vue')
   },
   {
-  path: '/order/add',
-  name: 'AddOrder',
-  component: () => import('@/views/AddOrder.vue')
+    path: '/customer/edit-profile',
+    name: 'EditProfileCustomer',
+    component: () => import('../views/EditProfileCustomer.vue')
   },
   {
-  path: '/orders/details',
-  name: 'CustomerOrderDetails',
-  component: () => import('@/views/CustomerOrderDetails.vue')
+    path: '/order/add',
+    name: 'AddOrder',
+    component: () => import('@/views/AddOrder.vue')
   },
   {
-  path: '/tukang/orders',
-  name: 'TukangOrderList',
-  component: () => import('@/views/TukangOrderList.vue')
+    path: '/orders/details',
+    name: 'CustomerOrderDetails',
+    component: () => import('@/views/CustomerOrderDetails.vue')
+  },
+  {
+    path: '/tukang/orders',
+    name: 'TukangOrderList',
+    component: () => import('@/views/TukangOrderList.vue')
   }
 ];
 

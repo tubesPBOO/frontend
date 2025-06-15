@@ -13,19 +13,48 @@
         </div>
 
         <transition-group name="fade" tag="form" @submit.prevent="registerTukang">
+          <!-- Nama -->
           <div class="mb-3" key="name">
             <input v-model="form.name" type="text" class="form-control custom-input" placeholder="Nama Lengkap" required />
           </div>
+
+          <!-- Email -->
           <div class="mb-3" key="email">
             <input v-model="form.email" type="email" class="form-control custom-input" placeholder="Email" required />
           </div>
-          <div class="mb-3" key="password">
-            <input v-model="form.password" type="password" class="form-control custom-input" placeholder="Kata Sandi" required />
+
+          <!-- Password -->
+          <div class="mb-3 position-relative" key="password">
+            <input
+              :type="isPasswordVisible ? 'text' : 'password'"
+              v-model="form.password"
+              class="form-control custom-input"
+              placeholder="Kata Sandi"
+              required
+            />
+            <span @click="togglePasswordVisibility" class="position-absolute top-50 end-0 translate-middle pe-3 cursor-pointer">
+              <i :class="isPasswordVisible ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+            </span>
           </div>
+
+          <!-- Confirm Password -->
+          <div class="mb-3" key="confirm-password">
+            <input
+              :type="isPasswordVisible ? 'text' : 'password'"
+              v-model="form.confirmPassword"
+              class="form-control custom-input"
+              placeholder="Konfirmasi Kata Sandi"
+              required
+            />
+          </div>
+
+          <!-- Nomor Telepon -->
           <div class="mb-4" key="phone">
             <input v-model="form.phoneNumber" type="text" class="form-control custom-input" placeholder="Nomor Telepon" required />
           </div>
-          <button type="submit" class="btn btn-light w-100 fw-semibold rounded-pill" :disabled="isLoading">
+
+          <!-- Submit Button -->
+          <button type="submit" class="btn btn-light w-100 fw-semibold rounded-pill" :disabled="isLoading" key="submit">
             <span v-if="isLoading" class="spinner-border spinner-border-sm me-2"></span>
             Daftar
           </button>
@@ -44,25 +73,49 @@ export default {
         name: '',
         email: '',
         password: '',
+        confirmPassword: '', 
         role: 'ROLE_TUKANG',
         availability: true,
         phoneNumber: '',
         totrating: 0.0,
         ratingCount: 0
       },
+      isPasswordVisible: false, 
       message: '',
       isError: false,
       isLoading: false
     };
   },
   methods: {
+    togglePasswordVisibility() {
+      this.isPasswordVisible = !this.isPasswordVisible;
+    },
     async registerTukang() {
       this.isLoading = true;
+
+      // Validate passwords match
+      if (this.form.password !== this.form.confirmPassword) {
+        this.message = 'Kata sandi tidak cocok.';
+        this.isError = true;
+        this.isLoading = false;
+        return;
+      }
+
       try {
         const res = await fetch('http://localhost:8080/api/tukang/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(this.form)
+          body: JSON.stringify({
+            name: this.form.name,
+            email: this.form.email,
+            password: this.form.password,
+            role: this.form.role,
+            availability: this.form.availability,
+            phoneNumber: this.form.phoneNumber,
+            alamat: this.form.alamat,
+            totrating: this.form.totrating,
+            ratingCount: this.form.ratingCount
+          })
         });
 
         if (!res.ok) {

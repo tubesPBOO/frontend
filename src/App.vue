@@ -19,5 +19,6 @@ export default {
       this.$router.push('/materials');
     }
   }
+  
 };
 </script>
