@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style="background-color: #f8f9fa;">
         <!-- NAVBAR -->
         <nav class="navbar navbar-expand-lg navbar-white bg-white px-4 py-3 fixed-top">
             <div class="container-fluid">
@@ -46,7 +46,7 @@
             <div class="mb-5">
                 <!-- Header Section with the 'My Projects' title and Add Project Button aligned -->
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="fw-semibold">My Projects</h4>
+                    <h4 class="fw-semibold" style="color: black;">My Projects</h4>
                     <button class="btn btn-primary" @click="showAddProject = true">Add Project</button>
                 </div>
 
@@ -157,22 +157,36 @@
 
             <!-- Available Materials -->
             <div class="mb-5">
-                <h4 class="fw-semibold mb-3">Available Materials</h4>
+                <h4 class="fw-semibold mb-3" style="color: black;">Available Materials</h4>
                 <div class="row row-cols-1 row-cols-md-3 g-4">
-                    <div v-for="material in filteredMaterials" :key="material.id" class="col">
+                    <div v-for="(material, index) in filteredMaterials.slice(0, showAllMaterials ? filteredMaterials.length : materialsToShow)"
+                        :key="material.id" class="col">
                         <div class="card h-100 shadow-sm">
-                            <img :src="material.image" class="card-img-top" alt="Material Image"
-                                style="height: 160px; object-fit: cover;" />
                             <div class="card-body">
                                 <h5 class="card-title">{{ material.name }}</h5>
                                 <p class="card-text">{{ material.description }}</p>
                                 <p class="fw-bold">Rp{{ material.price.toLocaleString('id-ID') }}</p>
-                                <button class="btn btn-outline-primary w-100" @click="addToCart(material)">
-                                    ➕ Add to Cart
+                                <button class="CartBtn w-100 d-flex align-items-center justify-content-center gap-2"
+                                    @click="addToCart(material)">
+                                    <span class="fw-bold">Add to Cart</span>
                                 </button>
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Show "Show All" Button if there are more materials than shown -->
+                <div class="text-center mt-4" v-if="filteredMaterials.length > materialsToShow && !showAllMaterials">
+                    <button class="btn btn-outline-primary" @click="showAllMaterials = true">
+                        Show All {{ filteredMaterials.length }} Materials
+                    </button>
+                </div>
+
+                <!-- Optionally show a "Show Less" button when expanded -->
+                <div class="text-center mt-4" v-if="showAllMaterials">
+                    <button class="btn btn-outline-secondary" @click="showAllMaterials = false">
+                        Show Less
+                    </button>
                 </div>
             </div>
 
@@ -224,6 +238,71 @@
             </div>
 
         </div>
+        <footer class="footer-section bg-footer text-dark py-5">
+            <div class="container">
+                <div class="row gy-4">
+
+                    <!-- Shop -->
+                    <div class="col-md-3">
+                        <h6 class="fw-bold mb-3">Shop</h6>
+                        <ul class="list-unstyled">
+                            <li>All</li>
+                            <li>Home & Living</li>
+                            <li>Accessories</li>
+                            <li>Stationery</li>
+                            <li>Sale</li>
+                            <li>Gift Card</li>
+                        </ul>
+                    </div>
+
+                    <!-- Helpful Links -->
+                    <div class="col-md-3">
+                        <h6 class="fw-bold mb-3">Helpful Links</h6>
+                        <ul class="list-unstyled">
+                            <li>FAQ</li>
+                            <li>Terms & Conditions</li>
+                            <li>Privacy Policy</li>
+                            <li>Shipping Policy</li>
+                            <li>Refund Policy</li>
+                            <li>Cookie Policy</li>
+                        </ul>
+                    </div>
+
+                    <!-- Contact -->
+                    <div class="col-md-3">
+                        <h6 class="fw-bold mb-3">Contact</h6>
+                        <p class="mb-1">tukang-in@mysite.com</p>
+                        <p class="mb-1">123-456-7890</p>
+                        <p class="mb-3">Suwardi Base Camp,<br />Bandung, Indonesia</p>
+                        <div class="d-flex gap-3">
+                            <i class="bi bi-instagram"></i>
+                            <i class="bi bi-facebook"></i>
+                            <i class="bi bi-tiktok"></i>
+                        </div>
+                    </div>
+
+                    <!-- Subscribe -->
+                    <div class="col-md-3">
+                        <h6 class="fw-bold mb-3">Subscribe</h6>
+                        <p>Subscribe to our newsletter and be among the first to hear about new arrivals, events and
+                            special offers.</p>
+                        <input type="email" class="form-control mb-2 rounded-pill px-3" placeholder="Email *" />
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="subscribeCheck" />
+                            <label class="form-check-label" for="subscribeCheck">
+                                Yes, subscribe me to your newsletter.
+                            </label>
+                        </div>
+                        <button class="btn btn-dark rounded-pill px-4">Subscribe</button>
+                    </div>
+                </div>
+
+                <!-- Copyright -->
+                <div class="text-center mt-5 small">
+                    © 2035 by Kelompok 4. Powered and secured by <a href="#" class="text-decoration-underline">4</a>
+                </div>
+            </div>
+        </footer>
     </div>
 </template>
 
@@ -249,6 +328,8 @@ export default {
             searchTerm: '',
             materials: [],
             showCart: false,
+            materialsToShow: 3,
+            showAllMaterials: false,
         };
     },
     computed: {
@@ -581,5 +662,92 @@ nav.navbar {
         opacity: 0;
         transform: translateX(-100px) rotate(65deg);
     }
+}
+
+.bg-footer {
+    background-color: #f5e7b5 !important;
+    /* Cream color */
+    color: #000 !important;
+    /* Biar teksnya nggak ikutan gelap */
+}
+
+.bg-footer .form-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.bg-footer a {
+    color: #000;
+}
+
+.bg-footer .form-check-label {
+    background-color: transparent !important;
+    display: inline !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    color: #000 !important;
+    /* opsional, pastikan teksnya tetap terbaca */
+}
+
+/* From Uiverse.io by vinodjangid07 */
+.CartBtn {
+    width: 100%;
+    height: 40px;
+    border-radius: 12px;
+    border: none;
+    background-color: rgb(255, 208, 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition-duration: 0.5s;
+    overflow: hidden;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.103);
+    position: relative;
+}
+
+.IconContainer {
+    position: absolute;
+    left: -50px;
+    width: 30px;
+    height: 30px;
+    background-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    z-index: 2;
+    transition-duration: 0.5s;
+}
+
+.text {
+    height: 100%;
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgb(17, 17, 17);
+    z-index: 1;
+    transition-duration: 0.5s;
+    font-size: 1.04em;
+    font-weight: 600;
+}
+
+.CartBtn:hover .IconContainer {
+    transform: translateX(58px);
+    border-radius: 40px;
+    transition-duration: 0.5s;
+}
+
+.CartBtn:hover .text {
+    transform: translate(10px, 0px);
+    transition-duration: 0.5s;
+}
+
+.CartBtn:active {
+    transform: scale(0.95);
+    transition-duration: 0.5s;
 }
 </style>
