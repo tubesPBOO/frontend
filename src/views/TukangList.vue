@@ -8,7 +8,6 @@
             <th>Nama</th>
             <th>Email</th>
             <th>No. Telepon</th>
-            <th>Alamat</th>
             <th>Aksi</th>
           </tr>
         </thead>
@@ -17,10 +16,11 @@
             <td>{{ worker.name }}</td>
             <td>{{ worker.email }}</td>
             <td>{{ worker.phoneNumber }}</td>
-            <td>{{ worker.address }}</td>
             <td>
-              <router-link :to="`/tukang/${worker.name}`" class="action-button">Lihat</router-link>
-            </td>
+            <button @click="deleteTukang(worker.name)" class="action-button">
+              Delete
+            </button>
+          </td>
           </tr>
         </tbody>
       </table>
@@ -33,27 +33,50 @@ export default {
   data() {
     return {
       workers: [],
+      name:''
     };
   },
   async mounted() {
     try {
-      const res = await fetch('/api/tukang');
+      const res = await fetch('http://localhost:8080/api/admin/getTukangList');
       this.workers = await res.json();
     } catch (err) {
       console.error('Gagal mengambil data tukang:', err);
     }
   },
+   methods: {
+    async deleteTukang(name) {
+      const confirmed = confirm(`Apakah kamu yakin ingin menghapus tukang bernama "${name}"?`);
+      if (!confirmed) return;
+
+      try {
+        const response = await fetch(`http://localhost:8080/api/admin/deleteTukang/${encodeURIComponent(name)}`, {
+          method: 'DELETE',
+        });
+
+        if (response.ok) {
+          this.workers = this.workers.filter(c => c.name !== name);
+          alert("Tukang berhasil dihapus");
+        } else {
+          alert("Gagal menghapus tukang");
+        }
+      } catch (err) {
+        console.error('Error saat menghapus tukang:', err);
+        alert("Terjadi kesalahan saat menghapus tukang");
+      }
+    }
+  }
 };
 </script>
 
 <style scoped>
 .tukang-page {
   min-height: 100vh;
-  background: url('/images/ale2.jpg') center/cover no-repeat;
+  background: url('/images/Nordwood.jpg') center/cover no-repeat;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
+  justify-content: center;     
+  align-items: flex-start;     
+  padding: 3rem 1rem;          
   animation: fadeIn 1s ease-in;
 }
 
@@ -70,10 +93,17 @@ export default {
   max-width: 900px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   color: white;
   text-align: center;
   border: 1px solid rgba(255, 255, 255, 0.2);
+  animation: slideUp 0.8s ease forwards;
   overflow-x: auto;
+}
+
+@keyframes slideUp {
+  0% { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
 h2 {

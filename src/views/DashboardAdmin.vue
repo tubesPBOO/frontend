@@ -1,7 +1,7 @@
 <template>
   <div class="admin-dashboard-wrapper">
     <div class="dashboard-content">
-      <h1 class="dashboard-title">Dashboard Admin - Tukang.In</h1>
+      <h1 class="dashboard-title">Dashboard Admin  Tukang.In</h1>
       <p class="dashboard-subtitle">Selamat Datang!</p>
       <p class="dashboard-subtext">Kelola data material Anda dengan mudah</p>
 
@@ -19,6 +19,11 @@
         <router-link to="/customers" class="dashboard-card">
           <div class="icon">📋</div>
           <span>Daftar Customer</span>
+        </router-link>
+
+        <router-link to="/tukang" class="dashboard-card">
+          <div class="icon">📋</div>
+          <span>Daftar Tukang</span>
         </router-link>
       </div>
     </div>
@@ -48,8 +53,8 @@ export default {
   border-radius: 20px;
   padding: 3rem 2rem;
   text-align: center;
-  max-width: 700px;
-  width: 100%;
+  max-width: 600px;
+  width: 1000%;
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
@@ -85,7 +90,7 @@ export default {
   flex-direction: column;
   align-items: center;
   background: rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
+  border-radius: 18px;
   padding: 1.5rem;
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.1);

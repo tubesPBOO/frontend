@@ -57,7 +57,6 @@ export default {
         });
 
         if (response.ok) {
-          // Hapus dari daftar lokal setelah sukses
           this.customers = this.customers.filter(c => c.name !== name);
           alert("Pelanggan berhasil dihapus");
         } else {

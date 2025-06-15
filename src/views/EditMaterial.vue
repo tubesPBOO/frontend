@@ -1,20 +1,38 @@
 <template>
-  <div class="edit-material-page">
-    <div class="form-glass">
-      <h2>Edit Bahan Material</h2>
+  <div class="material-list-page">
+    <input
+      v-model="searchQuery"
+      type="text"
+      class="search-box"
+      placeholder="Cari nama material..."
+    />
 
-      <input v-model="materialName" placeholder="Nama Material" required />
+    <div class="material-grid">
+      <div
+        v-for="(material, index) in filteredMaterials"
+        :key="index"
+        class="form-glass"
+      >
+        <h3>{{ material.name }}</h3>
+        <p>Harga: Rp{{ material.price }}</p>
+        <p>Stok: {{ material.stock }}</p>
+        <p>Rating: {{ material.totrating || 0 }} ({{ material.countrating || 0 }} suara)</p>
 
-      <label for="price">Harga Baru</label>
-      <input v-model.number="price" id="price" type="number" placeholder="Masukkan harga baru" />
-      <button @click="updatePrice">Update Harga</button>
+        <label>Edit Harga</label>
+        <input v-model.number="material.editedPrice" type="number" placeholder="Harga baru" />
+        <button @click="updatePrice(material)">Update Harga</button>
 
-      <label for="stock">Stok Baru</label>
-      <input v-model.number="stock" id="stock" type="number" placeholder="Masukkan stok baru" />
-      <button @click="updateStock">Update Stok</button>
+        <label>Edit Stok</label>
+        <input v-model.number="material.editedStock" type="number" placeholder="Stok baru" />
+        <button @click="updateStock(material)">Update Stok</button>
 
-      <p v-if="successMessage" class="response">{{ successMessage }}</p>
+        <p v-if="material.successMessage" class="response">{{ material.successMessage }}</p>
+      </div>
     </div>
+
+    <button class="toggle-btn" @click="toggleShow">
+      {{ showAll ? 'Show Less' : 'Show More' }}
+    </button>
   </div>
 </template>
 
@@ -22,79 +40,185 @@
 export default {
   data() {
     return {
-      materialName: '',
-      price: null,
-      stock: null,
-      rating: null,
-      successMessage: '',
+      materials: [],
+      searchQuery: '',
+      showAll: false,
     };
   },
+  computed: {
+    filteredMaterials() {
+      const filtered = this.materials.filter((m) =>
+        m.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+      );
+      return this.showAll ? filtered : filtered.slice(0, 6); // tampilkan 6 box dulu (2 baris)
+    },
+  },
   methods: {
-    async updatePrice() {
+    async fetchMaterials() {
       try {
-        const res = await fetch(`http://localhost:8080/api/admin/updatePrice/${encodeURIComponent(this.materialName)}`, {
+        const res = await fetch("http://localhost:8080/api/materials"); // ganti sesuai endpoint Anda
+        const data = await res.json();
+        this.materials = data.map((m) => ({
+          ...m,
+          editedPrice: m.price,
+          editedStock: m.stock,
+          successMessage: '',
+        }));
+      } catch (error) {
+        console.error("Gagal fetch materials", error);
+      }
+    },
+    async updatePrice(material) {
+      try {
+        const res = await fetch(`http://localhost:8080/api/admin/updatePrice/${encodeURIComponent(material.name)}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ price: this.price }),
+          body: JSON.stringify({ price: material.editedPrice }),
         });
-        if (!res.ok) throw new Error('Gagal memperbarui harga');
-        this.successMessage = 'Harga berhasil diperbarui';
+        if (!res.ok) throw new Error("Gagal update harga");
+        material.price = material.editedPrice;
+        material.successMessage = "Harga berhasil diperbarui";
       } catch (err) {
         alert(err.message);
       }
     },
-    async updateStock() {
+    async updateStock(material) {
       try {
-        const res = await fetch(`http://localhost:8080/api/admin/updateStock/${encodeURIComponent(this.materialName)}`, {
+        const res = await fetch(`http://localhost:8080/api/admin/updateStock/${encodeURIComponent(material.name)}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ stock: this.stock }),
+          body: JSON.stringify({ stock: material.editedStock }),
         });
-        if (!res.ok) throw new Error('Gagal memperbarui stok');
-        this.successMessage = 'Stok berhasil diperbarui';
+        if (!res.ok) throw new Error("Gagal update stok");
+        material.stock = material.editedStock;
+        material.successMessage = "Stok berhasil diperbarui";
       } catch (err) {
         alert(err.message);
       }
     },
+    toggleShow() {
+      this.showAll = !this.showAll;
+    },
+  },
+  mounted() {
+    this.fetchMaterials();
   },
 };
 </script>
 
 <style scoped>
-.edit-material-page {
+.material-list-page {
   min-height: 100vh;
   background: url('/images/Nordwood.jpg') center/cover no-repeat;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   padding: 2rem;
-  animation: fadeIn 1s ease-in;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.search-box {
+  margin-bottom: 2rem;
+  padding: 10px 15px;
+  width: 100%;
+  max-width: 600px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white;
+}
+
+.search-box::placeholder {
+  color: #ccc;
+}
+
+.material-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 1200px;
 }
 
 .form-glass {
   background: rgba(255, 255, 255, 0.07);
   border-radius: 16px;
-  padding: 2rem;
-  width: 100%;
-  max-width: 500px;
+  padding: 1.5rem;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   color: white;
-  text-align: center;
   border: 1px solid rgba(255, 255, 255, 0.2);
   animation: slideUp 0.8s ease forwards;
+}
+
+h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-family: "Poppins", sans-serif;
+}
+
+label, p {
+  text-align: left;
+  margin: 0.5rem 0 0.3rem;
+  font-family: "Poppins", sans-serif;
+}
+
+input {
+  display: block;
+  margin-bottom: 0.5rem;
+  padding: 10px;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 8px;
+  color: white;
+}
+
+input::placeholder {
+  color: #ccc;
+}
+
+button {
+  margin-top: 0.3rem;
+  margin-bottom: 1rem;
+  padding: 10px;
+  width: 100%;
+  background-color: white;
+  color: black;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: "Poppins", sans-serif;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background-color: #e6e6e6;
+}
+
+.response {
+  color: #2ecc71;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.toggle-btn {
+  margin-top: 1.5rem;
+  padding: 12px 24px;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: black;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: "Poppins", sans-serif;
+  transition: all 0.3s ease;
+}
+
+.toggle-btn:hover {
+  background-color: #ddd;
 }
 
 @keyframes slideUp {
@@ -106,71 +230,5 @@ export default {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-input {
-  display: block;
-  margin: 12px auto;
-  padding: 10px 15px;
-  width: 100%;
-  background-color: rgba(255, 255, 255, 0.1);
-  border: none;
-  border-radius: 8px;
-  color: white;
-  font-size: 1rem;
-  font-family: "Poppins", sans-serif;
-  transition: background 0.3s ease, transform 0.2s ease;
-}
-
-input:focus {
-  background-color: rgba(255, 255, 255, 0.2);
-  outline: none;
-  transform: scale(1.02);
-}
-
-input::placeholder {
-  color: #ccc;
-}
-
-h2 {
-  font-family: "Poppins", sans-serif;
-  font-size: 1.8rem;
-  margin-bottom: 1.5rem;
-  font-weight: bold;
-}
-
-label {
-  display: block;
-  text-align: left;
-  margin-top: 1rem;
-  font-weight: bold;
-  font-size: 0.95rem;
-  font-family: "Poppins", sans-serif;
-}
-
-button {
-  width: 100%;
-  margin-top: 0.5rem;
-  padding: 12px;
-  background-color: #FFF;
-  color: black;
-  font-weight: bold;
-  font-family: "Poppins", sans-serif;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: transform 0.2s ease, background-color 0.3s ease;
-}
-
-button:hover {
-  background-color: #FFF;
-  transform: scale(1.02);
-}
-
-.response {
-  margin-top: 1.2rem;
-  font-weight: 600;
-  color: #2ecc71;
-  animation: fadeIn 0.5s ease-in;
 }
 </style>

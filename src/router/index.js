@@ -12,7 +12,7 @@ import DashboardAdmin from '../views/DashboardAdmin.vue';
 import HomePage from '@/views/HomePage.vue';
 import Payment from '@/views/Payment.vue';
 import DashboardTukang from '@/views/DashboardTukang.vue';
-
+import TukangList from '../views/TukangList.vue';
 const routes = [
   {
     path: '/',
@@ -78,6 +78,11 @@ const routes = [
     path: '/customer/:name',
     name: 'CustomerProfile',
     component: CustomerProfile
+  },
+  {
+    path: '/tukang',
+    name:'TukangList',
+    component: TukangList
   },
   {
   path: '/materials/edit',
