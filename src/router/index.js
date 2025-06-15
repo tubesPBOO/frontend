@@ -81,7 +81,7 @@ const routes = [
     name: 'Edit Profile Tukang',
     component: EditProfileTukang
   },
-  { 
+  {
     path: '/customers',
     name: 'CustomerList',
     component: CustomerList
@@ -92,24 +92,29 @@ const routes = [
     component: CustomerProfile
   },
   {
-  path: '/materials/edit',
-  name: 'EditMaterial',
-  component: () => import('@/views/EditMaterial.vue')
+    path: '/materials/edit',
+    name: 'EditMaterial',
+    component: () => import('@/views/EditMaterial.vue')
   },
   {
-  path: '/order/add',
-  name: 'AddOrder',
-  component: () => import('@/views/AddOrder.vue')
+    path: '/customer/edit-profile',
+    name: 'EditProfileCustomer',
+    component: () => import('../views/EditProfileCustomer.vue')
   },
   {
-  path: '/orders/details',
-  name: 'CustomerOrderDetails',
-  component: () => import('@/views/CustomerOrderDetails.vue')
+    path: '/order/add',
+    name: 'AddOrder',
+    component: () => import('@/views/AddOrder.vue')
   },
   {
-  path: '/tukang/orders',
-  name: 'TukangOrderList',
-  component: () => import('@/views/TukangOrderList.vue')
+    path: '/orders/details',
+    name: 'CustomerOrderDetails',
+    component: () => import('@/views/CustomerOrderDetails.vue')
+  },
+  {
+    path: '/tukang/orders',
+    name: 'TukangOrderList',
+    component: () => import('@/views/TukangOrderList.vue')
   }
 ];
 

@@ -90,7 +90,8 @@ export default {
         });
 
         if (!response.ok) {
-          throw new Error('Login failed');
+          const errText = await response.text();
+          this.message = `Login gagal: ${errText}`;
         }
 
         const message = await response.text(); 
