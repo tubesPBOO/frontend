@@ -1,4 +1,5 @@
 <template>
+  <button @click="logout" class="logout-button">Logout</button>
   <div class="admin-dashboard-wrapper">
     <div class="dashboard-content">
       <h1 class="dashboard-title">Dashboard Admin  Tukang.In</h1>
@@ -32,7 +33,27 @@
 
 <script>
 export default {
-  name: 'AdminDashboard'
+  name: 'AdminDashboard',
+  methods: {
+    async logout() {
+      try {
+        const response = await fetch('http://localhost:8080/auth/logout', {
+          method: 'POST',
+          credentials: 'include', // jika backend pakai cookie/session
+        });
+
+        if (!response.ok) {
+          throw new Error('Gagal logout');
+        }
+
+        // Redirect ke login
+        this.$router.push('/login');
+      } catch (error) {
+        console.error('Logout error:', error);
+        alert('Terjadi kesalahan saat logout.');
+      }
+    }
+  }
 };
 </script>
 
@@ -111,5 +132,24 @@ export default {
 .dashboard-card span {
   font-weight: 600;
   font-size: 1rem;
+}
+
+.logout-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.logout-button:hover {
+  background-color: rgba(255, 255, 255, 0.4);
+  color: black;
 }
 </style>    

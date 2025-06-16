@@ -7,6 +7,7 @@ import GeneralRegister from '../views/GeneralRegister.vue';
 import RegisterCustomer from '../views/RegisterCustomer.vue';
 import RegisterTukang from '../views/RegisterTukang.vue';
 import CustomerList from '../views/CustomerList.vue';
+import TukangList from '../views/TukangList.vue';
 import CustomerProfile from '../views/CustomerProfile.vue';
 import DashboardAdmin from '../views/DashboardAdmin.vue';
 import HomePage from '@/views/HomePage.vue';
@@ -15,6 +16,7 @@ import DashboardTukang from '@/views/DashboardTukang.vue';
 import ProfileTukang from '@/views/ProfileTukang.vue';
 import EditProfileTukang from '@/views/EditProfileTukang.vue';
 import ProfileCustomer from '../views/ProfileCustomer.vue';
+import EditProfileCustomer from '../views/EditProfileCustomer.vue';
 const routes = [
   {
     path: '/',

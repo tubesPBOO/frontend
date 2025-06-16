@@ -81,6 +81,19 @@ export default {
   mounted() {
     this.loadProfile();
   },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.loadProfile();
+    });
+  },
+  watch: {
+  '$route.query.updated': {
+    immediate: true,
+    handler() {
+      this.loadProfile();
+    }
+  }
+},
   methods: {
     async loadProfile() {
       try {
@@ -88,7 +101,7 @@ export default {
           method: "GET",
           credentials: "include",
         });
-
+        console.log("Profil customer dimuat ulang");
         if (!response.ok) throw new Error("Gagal memuat profil");
 
         const data = await response.json();
