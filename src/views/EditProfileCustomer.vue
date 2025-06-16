@@ -135,7 +135,7 @@ export default {
                 if (!payload.password) delete payload.password;
 
                 const response = await fetch('http://localhost:8080/api/customers/updateProfile', {
-                    method: 'PUT',
+                    method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json'
                     },
