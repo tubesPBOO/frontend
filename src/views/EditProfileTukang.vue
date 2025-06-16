@@ -27,7 +27,7 @@
 
               <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
-                <input v-model="form.email" type="email" id="email" class="form-control rounded-pill" placeholder="Masukkan email baru" />
+                <input v-model="form.email" type="email" id="email" class="form-control rounded-pill" placeholder="Masukkan email baru" pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$"/>
               </div>
 
               <div class="mb-3">
@@ -113,7 +113,6 @@ export default {
 
         const data = await response.json();
 
-        // Populate form with current data
         this.form.name = data.name;
         this.form.email = data.email;
         this.form.phoneNumber = data.phoneNumber || '';
@@ -134,10 +133,17 @@ export default {
       try {
         const payload = { ...this.form };
 
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (this.form.email && !emailRegex.test(this.form.email)) {
+        this.showToast('error', 'Format email tidak valid.');
+        this.isLoading = false;
+        return;
+      }
+
         if (!payload.password) delete payload.password;
 
         const response = await fetch('http://localhost:8080/api/tukang/UpdateProfile', {
-          method: 'PUT',
+          method: 'PATCH',
           headers: {
             'Content-Type': 'application/json'
           },
