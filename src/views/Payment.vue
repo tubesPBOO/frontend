@@ -38,6 +38,11 @@
           </div>
         </div>
       </div>
+      <div class="text-center mt-4">
+        <router-link to="/orders" class="btn btn-outline-primary">
+          📦 Lihat Semua Order Saya
+        </router-link>
+      </div>
     </div>
   </div>
 </template>

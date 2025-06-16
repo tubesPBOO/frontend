@@ -224,7 +224,7 @@
                                     class="list-group-item d-flex justify-content-between align-items-center">
                                     <div>
                                         <strong>{{ item.name }} {{ item.quantity > 1 ? `x${item.quantity}` : ''
-                                            }}</strong><br />
+                                        }}</strong><br />
                                         <small>Rp{{ (item.price * item.quantity).toLocaleString('id-ID') }}</small>
                                     </div>
                                     <button class="btn btn-sm btn-danger" @click="removeFromCart(index)">Remove</button>
@@ -530,15 +530,29 @@ export default {
         async proceedToPayment() {
             this.isPaying = true;
             try {
-                this.storeCart();
+                const materialsOnly = this.cart.map(item => ({ name: item.name }));
+                console.log("🟢 Sending materials:", materialsOnly);
 
-                await new Promise(resolve => setTimeout(resolve, 1500)); // simulasi loading
+                const res = await fetch("http://localhost:8080/api/customers/order", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ materials: materialsOnly }),
+                });
 
+                if (!res.ok) {
+                    const errorText = await res.text();
+                    throw new Error(errorText);
+                }
+
+                await new Promise(resolve => setTimeout(resolve, 1500));
                 this.showCart = false;
 
-                // Redirect ke payment
-                this.$router.push('/payment'); // <-- ini yang nge-trigger route
+                this.$router.push('/payment');
+
             } catch (e) {
+                console.error('❌ Error in proceedToPayment:', e);
                 alert('❌ Gagal lanjut ke pembayaran: ' + e.message);
             } finally {
                 this.isPaying = false;
@@ -573,6 +587,7 @@ export default {
         this.fetchMyProjects();
         this.fetchMaterials();
         this.loadCart();
+        localStorage.removeItem("cart");
     },
 };
 </script>
