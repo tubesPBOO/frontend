@@ -1,33 +1,45 @@
 <template>
     <div style="background-color: #f8f9fa;">
         <!-- NAVBAR -->
-        <nav class="navbar navbar-expand-lg navbar-white bg-white px-4 py-3 fixed-top">
+        <nav class="navbar navbar-expand-lg navbar-white bg-white px-4 py-3 fixed-top shadow-sm">
             <div class="container-fluid">
+                <!-- Logo -->
                 <a class="navbar-brand fw-bold text-warning" href="#">
                     <span class="text-dark">Tukang.In</span>
                 </a>
 
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <!-- Hamburger Button -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">PROJECTS</a>
-                    </li>
-                    <li class="nav-item">
-                        <!-- Cart Icon -->
-                        <a class="nav-link position-relative" href="#" title="Cart">
-                            <i class="fas fa-cart-shopping fa-lg"></i>
-                            <span
-                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                {{ cart.length }}
-                            </span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <router-link to="/customer/profile" class="nav-link">
-                            <i class="fas fa-user fa-lg"></i>
-                        </router-link>
-                    </li>
-                </ul>
+                <!-- Navbar Items -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center gap-2">
+                        <li class="nav-item">
+                            <a class="nav-link fw-semibold" href="#">PROJECTS</a>
+                        </li>
+
+                        <li class="nav-item position-relative">
+                            <!-- Cart Text -->
+                            <a class="nav-link fw-semibold position-relative" href="#" title="Cart">
+                                CART
+                                <span
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                    style="font-size: 0.7rem;">
+                                    {{ cart.length }}
+                                </span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <router-link to="/customer/profile" class="nav-link">
+                                <i class="fas fa-user fa-lg"></i>
+                            </router-link>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </nav>
 
@@ -166,6 +178,14 @@
                                 <h5 class="card-title">{{ material.name }}</h5>
                                 <p class="card-text">{{ material.description }}</p>
                                 <p class="fw-bold">Rp{{ material.price.toLocaleString('id-ID') }}</p>
+                                <!-- Input rating -->
+                                <input type="number" class="form-control mb-2" min="1" max="5" step="0.5"
+                                    v-model.number="ratingInputs[material.name]" placeholder="Masukkan rating (1–5)" />
+                                <!-- Tombol submit rating -->
+                                <button class="btn btn-success w-100 mb-2"
+                                    @click="addRatingToMaterial(material.name, ratingInputs[material.name])">
+                                    Submit Rating
+                                </button>
                                 <button class="CartBtn w-100 d-flex align-items-center justify-content-center gap-2"
                                     @click="addToCart(material)">
                                     <span class="fw-bold">Add to Cart</span>
@@ -204,7 +224,7 @@
                                     class="list-group-item d-flex justify-content-between align-items-center">
                                     <div>
                                         <strong>{{ item.name }} {{ item.quantity > 1 ? `x${item.quantity}` : ''
-                                        }}</strong><br />
+                                            }}</strong><br />
                                         <small>Rp{{ (item.price * item.quantity).toLocaleString('id-ID') }}</small>
                                     </div>
                                     <button class="btn btn-sm btn-danger" @click="removeFromCart(index)">Remove</button>
@@ -330,6 +350,7 @@ export default {
             showCart: false,
             materialsToShow: 3,
             showAllMaterials: false,
+            ratingInputs: {},
         };
     },
     computed: {
@@ -439,8 +460,36 @@ export default {
             } finally {
                 this.loading = false; // stop loading
             }
-        }
-        ,
+        },
+        async addRatingToMaterial(name, ratingValue) {
+            try {
+                const res = await fetch(`http://localhost:8080/api/customers/rating/materials/${encodeURIComponent(name)}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        totrating: ratingValue,
+                    }),
+                });
+
+                if (!res.ok) {
+                    const errText = await res.text();
+                    throw new Error(`Gagal tambah rating: ${errText}`);
+                }
+
+                const message = await res.text();
+                alert(`✅ ${message}`);
+
+                // Opsional: Refresh data rating/material
+                await this.fetchMaterials();
+                await this.fetchAllRatings?.();
+
+            } catch (err) {
+                console.error('❌ Error saat add rating:', err);
+                alert(err.message);
+            }
+        },
         async fetchMyProjects() {
             try {
                 const response = await fetch('http://localhost:8080/api/customers/getMyProject', {
@@ -472,7 +521,7 @@ export default {
                 this.materials = data.map((mat) => ({
                     ...mat,
                     image: '/images/material-placeholder.jpg', // default image
-                    description: `Stock: ${mat.stock} | Rating: ${mat.totrating} (${mat.ratingCount} reviews)`,
+                    description: `Stock: ${mat.stock} | Rating: ${mat.totrating / 10} (${mat.ratingCount} reviews)`,
                 }));
             } catch (err) {
                 console.error('Fetch error:', err);
