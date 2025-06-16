@@ -18,12 +18,13 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center gap-2">
                         <li class="nav-item">
-                            <a class="nav-link fw-semibold" href="#">PROJECTS</a>
+                            <a class="nav-link fw-semibold" href="#projectt">PROJECTS</a>
                         </li>
 
                         <li class="nav-item position-relative">
                             <!-- Cart Text -->
-                            <a class="nav-link fw-semibold position-relative" href="#" title="Cart">
+                            <a class="nav-link fw-semibold position-relative" href="#" title="Cart"
+                                @click="showCart = true">
                                 CART
                                 <span
                                     class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
@@ -117,7 +118,7 @@
                 </div>
 
                 <div v-if="projects.length > 0" class="row row-cols-1 row-cols-md-2 g-4">
-                    <div v-for="project in projects" :key="project.id" class="col">
+                    <div v-for="project in projects" :key="project.id" class="col" id="projectt">
                         <div class="card shadow-sm position-relative h-100 overflow-hidden"
                             @mouseover="hoveredProject = project" @mouseleave="hoveredProject = null">
                             <!-- Project Image -->
@@ -224,7 +225,7 @@
                                     class="list-group-item d-flex justify-content-between align-items-center">
                                     <div>
                                         <strong>{{ item.name }} {{ item.quantity > 1 ? `x${item.quantity}` : ''
-                                        }}</strong><br />
+                                            }}</strong><br />
                                         <small>Rp{{ (item.price * item.quantity).toLocaleString('id-ID') }}</small>
                                     </div>
                                     <button class="btn btn-sm btn-danger" @click="removeFromCart(index)">Remove</button>
