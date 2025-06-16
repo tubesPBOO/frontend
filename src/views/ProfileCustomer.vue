@@ -11,23 +11,22 @@
               <p class="text-muted">Pelanggan</p>
             </div>
 
+            <!-- Loading Spinner -->
+            <div v-if="isLoading" class="text-center my-4">
+              <div class="spinner-border text-success" role="status">
+                <span class="visually-hidden">Memuat...</span>
+              </div>
+            </div>
+
             <!-- Profile Info -->
-            <div class="profile-info mb-4">
+            <div v-if="!isLoading" class="profile-info mb-4">
               <p><strong>Email:</strong> {{ customer.email }}</p>
               <p><strong>Nomor Telepon:</strong> {{ customer.phoneNumber || 'N/A' }}</p>
-              <p><strong>Status Ketersediaan:</strong>
-                <span :class="[
-                  'badge ms-2',
-                  customer.availability ? 'bg-success' : 'bg-danger'
-                ]">
-                  {{ customer.availability ? 'Aktif' : 'Nonaktif' }}
-                </span>
-              </p>
-              <p><strong>Total Rating:</strong> {{ customer.totrating.toFixed(2) }} ⭐ ({{ customer.ratingCount }} ulasan)</p>
+              <p><strong>Alamat:</strong> {{ customer.alamat || 'N/A' }}</p>
             </div>
 
             <!-- Action Buttons -->
-            <div class="d-grid gap-3 mt-4">
+            <div v-if="!isLoading" class="d-grid gap-3 mt-4">
               <button @click="goToEdit" class="btn btn-outline-success rounded-pill">
                 <i class="bi bi-pencil-square me-2"></i>Edit Profil
               </button>
@@ -46,12 +45,8 @@
     </div>
 
     <!-- Toast Notification -->
-    <div
-      v-if="toast.show"
-      class="toast-notification"
-      :class="{ success: toast.type === 'success', error: toast.type === 'error' }"
-      @animationend="hideToast"
-    >
+    <div v-if="toast.show" class="toast-notification"
+      :class="{ success: toast.type === 'success', error: toast.type === 'error' }" @animationend="hideToast">
       {{ toast.message }}
     </div>
   </div>
@@ -71,6 +66,7 @@ export default {
         totrating: 0,
         ratingCount: 0,
       },
+      isLoading: false, // To track loading state
       toast: {
         show: false,
         message: "",
@@ -79,7 +75,7 @@ export default {
     };
   },
   mounted() {
-    this.loadProfile();
+    this.loadProfile(); // Load profile data on mount
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
@@ -96,6 +92,7 @@ export default {
 },
   methods: {
     async loadProfile() {
+      this.isLoading = true; // Show loading indicator
       try {
         const response = await fetch("http://localhost:8080/api/customers/getCurrentUser", {
           method: "GET",
@@ -110,10 +107,7 @@ export default {
           name: data.name,
           email: data.email,
           phoneNumber: data.phoneNumber,
-          alamat: data.alamat,
-          availability: data.availability,
-          totrating: data.totrating || 0,
-          ratingCount: data.ratingCount || 0,
+          alamat: data.address,
         };
       } catch (err) {
         console.error("Failed to load profile:", err);
@@ -121,6 +115,8 @@ export default {
         setTimeout(() => {
           this.$router.push("/login");
         }, 2000);
+      } finally {
+        this.isLoading = false; // Hide loading indicator
       }
     },
 
@@ -170,7 +166,9 @@ export default {
     },
 
     goToEdit() {
-      this.$router.push("/customer/edit-profile");
+      this.$router.push("/customer/edit-profile").then(() => {
+        this.loadProfile(); // Reload profile data after returning from edit
+      });
     },
 
     showToast(type, message) {
@@ -199,9 +197,10 @@ export default {
 
 .card {
   backdrop-filter: blur(10px);
-  background-color: #f9f9f9; 
+  background-color: #f9f9f9;
   transition: box-shadow 0.3s ease;
 }
+
 .card:hover {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
 }
@@ -228,9 +227,11 @@ export default {
   opacity: 1;
   animation: slideIn 0.3s ease, fadeOut 3s ease forwards;
 }
+
 .toast-notification.success {
   background: #16a34a;
 }
+
 .toast-notification.error {
   background: #ef4444;
 }
@@ -240,15 +241,20 @@ export default {
     transform: translateX(100px);
     opacity: 0;
   }
+
   to {
     transform: translateX(0);
     opacity: 1;
   }
 }
+
 @keyframes fadeOut {
-  0%, 90% {
+
+  0%,
+  90% {
     opacity: 1;
   }
+
   100% {
     opacity: 0;
     visibility: hidden;

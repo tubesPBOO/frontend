@@ -1,33 +1,45 @@
 <template>
-    <div>
+    <div style="background-color: #f8f9fa;">
         <!-- NAVBAR -->
-        <nav class="navbar navbar-expand-lg navbar-white bg-white px-4 py-3 fixed-top">
+        <nav class="navbar navbar-expand-lg navbar-white bg-white px-4 py-3 fixed-top shadow-sm">
             <div class="container-fluid">
+                <!-- Logo -->
                 <a class="navbar-brand fw-bold text-warning" href="#">
                     <span class="text-dark">Tukang.In</span>
                 </a>
 
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <!-- Hamburger Button -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">PROJECTS</a>
-                    </li>
-                    <li class="nav-item">
-                        <!-- Cart Icon -->
-                        <a class="nav-link position-relative" href="#" title="Cart">
-                            <i class="fas fa-cart-shopping fa-lg"></i>
-                            <span
-                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                {{ cart.length }}
-                            </span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <router-link to="/customer/profile" class="nav-link">
-                            <i class="fas fa-user fa-lg"></i>
-                        </router-link>
-                    </li>
-                </ul>
+                <!-- Navbar Items -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center gap-2">
+                        <li class="nav-item">
+                            <a class="nav-link fw-semibold" href="#">PROJECTS</a>
+                        </li>
+
+                        <li class="nav-item position-relative">
+                            <!-- Cart Text -->
+                            <a class="nav-link fw-semibold position-relative" href="#" title="Cart">
+                                CART
+                                <span
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                    style="font-size: 0.7rem;">
+                                    {{ cart.length }}
+                                </span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <router-link to="/customer/profile" class="nav-link">
+                                <i class="fas fa-user fa-lg"></i>
+                            </router-link>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </nav>
 
@@ -46,7 +58,7 @@
             <div class="mb-5">
                 <!-- Header Section with the 'My Projects' title and Add Project Button aligned -->
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="fw-semibold">My Projects</h4>
+                    <h4 class="fw-semibold" style="color: black;">My Projects</h4>
                     <button class="btn btn-primary" @click="showAddProject = true">Add Project</button>
                 </div>
 
@@ -157,22 +169,44 @@
 
             <!-- Available Materials -->
             <div class="mb-5">
-                <h4 class="fw-semibold mb-3">Available Materials</h4>
+                <h4 class="fw-semibold mb-3" style="color: black;">Available Materials</h4>
                 <div class="row row-cols-1 row-cols-md-3 g-4">
-                    <div v-for="material in filteredMaterials" :key="material.id" class="col">
+                    <div v-for="(material, index) in filteredMaterials.slice(0, showAllMaterials ? filteredMaterials.length : materialsToShow)"
+                        :key="material.id" class="col">
                         <div class="card h-100 shadow-sm">
-                            <img :src="material.image" class="card-img-top" alt="Material Image"
-                                style="height: 160px; object-fit: cover;" />
                             <div class="card-body">
                                 <h5 class="card-title">{{ material.name }}</h5>
                                 <p class="card-text">{{ material.description }}</p>
                                 <p class="fw-bold">Rp{{ material.price.toLocaleString('id-ID') }}</p>
-                                <button class="btn btn-outline-primary w-100" @click="addToCart(material)">
-                                    ➕ Add to Cart
+                                <!-- Input rating -->
+                                <input type="number" class="form-control mb-2" min="1" max="5" step="0.5"
+                                    v-model.number="ratingInputs[material.name]" placeholder="Masukkan rating (1–5)" />
+                                <!-- Tombol submit rating -->
+                                <button class="btn btn-success w-100 mb-2"
+                                    @click="addRatingToMaterial(material.name, ratingInputs[material.name])">
+                                    Submit Rating
+                                </button>
+                                <button class="CartBtn w-100 d-flex align-items-center justify-content-center gap-2"
+                                    @click="addToCart(material)">
+                                    <span class="fw-bold">Add to Cart</span>
                                 </button>
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Show "Show All" Button if there are more materials than shown -->
+                <div class="text-center mt-4" v-if="filteredMaterials.length > materialsToShow && !showAllMaterials">
+                    <button class="btn btn-outline-primary" @click="showAllMaterials = true">
+                        Show All {{ filteredMaterials.length }} Materials
+                    </button>
+                </div>
+
+                <!-- Optionally show a "Show Less" button when expanded -->
+                <div class="text-center mt-4" v-if="showAllMaterials">
+                    <button class="btn btn-outline-secondary" @click="showAllMaterials = false">
+                        Show Less
+                    </button>
                 </div>
             </div>
 
@@ -224,6 +258,71 @@
             </div>
 
         </div>
+        <footer class="footer-section bg-footer text-dark py-5">
+            <div class="container">
+                <div class="row gy-4">
+
+                    <!-- Shop -->
+                    <div class="col-md-3">
+                        <h6 class="fw-bold mb-3">Shop</h6>
+                        <ul class="list-unstyled">
+                            <li>All</li>
+                            <li>Home & Living</li>
+                            <li>Accessories</li>
+                            <li>Stationery</li>
+                            <li>Sale</li>
+                            <li>Gift Card</li>
+                        </ul>
+                    </div>
+
+                    <!-- Helpful Links -->
+                    <div class="col-md-3">
+                        <h6 class="fw-bold mb-3">Helpful Links</h6>
+                        <ul class="list-unstyled">
+                            <li>FAQ</li>
+                            <li>Terms & Conditions</li>
+                            <li>Privacy Policy</li>
+                            <li>Shipping Policy</li>
+                            <li>Refund Policy</li>
+                            <li>Cookie Policy</li>
+                        </ul>
+                    </div>
+
+                    <!-- Contact -->
+                    <div class="col-md-3">
+                        <h6 class="fw-bold mb-3">Contact</h6>
+                        <p class="mb-1">tukang-in@mysite.com</p>
+                        <p class="mb-1">123-456-7890</p>
+                        <p class="mb-3">Suwardi Base Camp,<br />Bandung, Indonesia</p>
+                        <div class="d-flex gap-3">
+                            <i class="bi bi-instagram"></i>
+                            <i class="bi bi-facebook"></i>
+                            <i class="bi bi-tiktok"></i>
+                        </div>
+                    </div>
+
+                    <!-- Subscribe -->
+                    <div class="col-md-3">
+                        <h6 class="fw-bold mb-3">Subscribe</h6>
+                        <p>Subscribe to our newsletter and be among the first to hear about new arrivals, events and
+                            special offers.</p>
+                        <input type="email" class="form-control mb-2 rounded-pill px-3" placeholder="Email *" />
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="subscribeCheck" />
+                            <label class="form-check-label" for="subscribeCheck">
+                                Yes, subscribe me to your newsletter.
+                            </label>
+                        </div>
+                        <button class="btn btn-dark rounded-pill px-4">Subscribe</button>
+                    </div>
+                </div>
+
+                <!-- Copyright -->
+                <div class="text-center mt-5 small">
+                    © 2035 by Kelompok 4. Powered and secured by <a href="#" class="text-decoration-underline">4</a>
+                </div>
+            </div>
+        </footer>
     </div>
 </template>
 
@@ -249,6 +348,9 @@ export default {
             searchTerm: '',
             materials: [],
             showCart: false,
+            materialsToShow: 3,
+            showAllMaterials: false,
+            ratingInputs: {},
         };
     },
     computed: {
@@ -358,8 +460,36 @@ export default {
             } finally {
                 this.loading = false; // stop loading
             }
-        }
-        ,
+        },
+        async addRatingToMaterial(name, ratingValue) {
+            try {
+                const res = await fetch(`http://localhost:8080/api/customers/rating/materials/${encodeURIComponent(name)}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        totrating: ratingValue,
+                    }),
+                });
+
+                if (!res.ok) {
+                    const errText = await res.text();
+                    throw new Error(`Gagal tambah rating: ${errText}`);
+                }
+
+                const message = await res.text();
+                alert(`✅ ${message}`);
+
+                // Opsional: Refresh data rating/material
+                await this.fetchMaterials();
+                await this.fetchAllRatings?.();
+
+            } catch (err) {
+                console.error('❌ Error saat add rating:', err);
+                alert(err.message);
+            }
+        },
         async fetchMyProjects() {
             try {
                 const response = await fetch('http://localhost:8080/api/customers/getMyProject', {
@@ -391,7 +521,7 @@ export default {
                 this.materials = data.map((mat) => ({
                     ...mat,
                     image: '/images/material-placeholder.jpg', // default image
-                    description: `Stock: ${mat.stock} | Rating: ${mat.totrating} (${mat.ratingCount} reviews)`,
+                    description: `Stock: ${mat.stock} | Rating: ${mat.totrating / 10} (${mat.ratingCount} reviews)`,
                 }));
             } catch (err) {
                 console.error('Fetch error:', err);
@@ -400,15 +530,29 @@ export default {
         async proceedToPayment() {
             this.isPaying = true;
             try {
-                this.storeCart();
+                const materialsOnly = this.cart.map(item => ({ name: item.name }));
+                console.log("🟢 Sending materials:", materialsOnly);
 
-                await new Promise(resolve => setTimeout(resolve, 1500)); // simulasi loading
+                const res = await fetch("http://localhost:8080/api/customers/order", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ materials: materialsOnly }),
+                });
 
+                if (!res.ok) {
+                    const errorText = await res.text();
+                    throw new Error(errorText);
+                }
+
+                await new Promise(resolve => setTimeout(resolve, 1500));
                 this.showCart = false;
 
-                // Redirect ke payment
-                this.$router.push('/payment'); // <-- ini yang nge-trigger route
+                this.$router.push('/payment');
+
             } catch (e) {
+                console.error('❌ Error in proceedToPayment:', e);
                 alert('❌ Gagal lanjut ke pembayaran: ' + e.message);
             } finally {
                 this.isPaying = false;
@@ -443,6 +587,7 @@ export default {
         this.fetchMyProjects();
         this.fetchMaterials();
         this.loadCart();
+        localStorage.removeItem("cart");
     },
 };
 </script>
@@ -581,5 +726,92 @@ nav.navbar {
         opacity: 0;
         transform: translateX(-100px) rotate(65deg);
     }
+}
+
+.bg-footer {
+    background-color: #f5e7b5 !important;
+    /* Cream color */
+    color: #000 !important;
+    /* Biar teksnya nggak ikutan gelap */
+}
+
+.bg-footer .form-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.bg-footer a {
+    color: #000;
+}
+
+.bg-footer .form-check-label {
+    background-color: transparent !important;
+    display: inline !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    color: #000 !important;
+    /* opsional, pastikan teksnya tetap terbaca */
+}
+
+/* From Uiverse.io by vinodjangid07 */
+.CartBtn {
+    width: 100%;
+    height: 40px;
+    border-radius: 12px;
+    border: none;
+    background-color: rgb(255, 208, 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition-duration: 0.5s;
+    overflow: hidden;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.103);
+    position: relative;
+}
+
+.IconContainer {
+    position: absolute;
+    left: -50px;
+    width: 30px;
+    height: 30px;
+    background-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    z-index: 2;
+    transition-duration: 0.5s;
+}
+
+.text {
+    height: 100%;
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgb(17, 17, 17);
+    z-index: 1;
+    transition-duration: 0.5s;
+    font-size: 1.04em;
+    font-weight: 600;
+}
+
+.CartBtn:hover .IconContainer {
+    transform: translateX(58px);
+    border-radius: 40px;
+    transition-duration: 0.5s;
+}
+
+.CartBtn:hover .text {
+    transform: translate(10px, 0px);
+    transition-duration: 0.5s;
+}
+
+.CartBtn:active {
+    transform: scale(0.95);
+    transition-duration: 0.5s;
 }
 </style>
